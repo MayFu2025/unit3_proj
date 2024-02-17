@@ -56,43 +56,41 @@ ScreenManager:
                 id: NavHome
                 text: "Home"
                 icon: "home"
-                on_release:
         MDNavigationRailItem:
                 id: NavEmployees
                 text: "Employees"
                 icon: "account-group"
-                on_release:
+                on_release: root.parent.parent.parent.current= "Employees"
         MDNavigationRailItem:
                 id: NavInventory
                 text: "Inventory"
                 icon: "package-variant"
-                on_release:
+                on_release: root.parent.parent.parent.current= "Inventory"
         MDNavigationRailItem:
                 id: NavOrders
                 text: "Orders"
                 icon: "view-list"
-                on_release:
+                on_release: root.parent.parent.parent.current= "Orders"
         MDNavigationRailItem:
                 id: NavFinance
                 text: "Finance"
                 icon: "currency-usd"
-                on_release:
+                on_release: root.parent.parent.parent.current= "Finance"
         MDNavigationRailItem:
                 text: "Log out"
                 icon: "logout"
-                on_release:
+                on_release: root.parent.parent.parent.current= "Startup"
 
 <HomeScreen>:
-        MDBoxLayout:
-                size_hint: 1, 1
+        BoxLayout:
                 orientation: 'horizontal'
-                md_bg_color: 'white'
+                size_hint: 1, 1
 
                 Navigation:
                         size_hint: 0.1, 1
 
                 MDBoxLayout:
-                        size_hint: 1, 1
+                        size_hint: 0.9, 1
                         orientation: 'vertical'
                         md_bg_color: 'white'
                         padding: 50

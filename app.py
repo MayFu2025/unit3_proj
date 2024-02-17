@@ -45,8 +45,8 @@ class StartupScreen(MDScreen):
 
 
 class Navigation(MDNavigationRail):
-    pass
-
+    def try_change(self, destination:str):
+        pass
 
 class BackButton(MDFlatButton):
     pass
