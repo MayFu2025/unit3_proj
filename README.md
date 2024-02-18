@@ -33,7 +33,7 @@ HNE obtains orders
 **Fig.1** *System diagram of proposed solution*
 
 ### Application Wireframe
-<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="450" src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2Futc6ePhsfo0sHDL2E9SGdy%2FUnit-3-Wireframe%3Ftype%3Ddesign%26node-id%3D0%253A1%26mode%3Ddesign%26t%3DXxDtDB1SVSzK69rK-1" allowfullscreen></iframe>
+<iframe><style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="450" src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2Futc6ePhsfo0sHDL2E9SGdy%2FUnit-3-Wireframe%3Ftype%3Ddesign%26node-id%3D0%253A1%26mode%3Ddesign%26t%3DXxDtDB1SVSzK69rK-1" allowfullscreen></iframe>
 **Fig.2** *Wireframe of the application design*
 
 ### UML Diagrams
