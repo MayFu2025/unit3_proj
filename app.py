@@ -1,6 +1,7 @@
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 from kivy.core.window import Window
+from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.navigationrail import MDNavigationRail
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.button import MDFlatButton
@@ -46,7 +47,7 @@ class StartupScreen(MDScreen):
 
 class Navigation(MDNavigationRail):
     def try_change(self, destination:str):
-        pass
+        print(self.parent.ids)
 
 class BackButton(MDFlatButton):
     pass
@@ -57,7 +58,25 @@ class HomeScreen(MDScreen):
 
 
 class EmployeeManager(MDScreen):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.employee_table = None
+        self.selected_rows = []  # List to keep track which rows were selected
+
+    # Making a Table
+    def on_pre_enter(self, *args): #'*args' means it doesn't know what the arguments will be
+        columns_names = [('First Name', 50), ('Last Name', 50), ('Admin Status', 50)]
+        self.employee_table = MDDataTable(
+            size_hint = (0.8, 0.5),
+            pos_hint = {'center_x':0.5, 'center_y':0.5},
+            use_pagination = False,
+            check = True,
+            column_data = columns_names
+        )
+        self.data_tables.bind(on_row_press=self.row_pressed)  # bind a function to function
+        self.data_tables.bind(on_check_press=self.checkbox_pressed)
+        self.add_widget(self.data_tables)
+        self.update()
 
 
 class InventoryManager(MDScreen):

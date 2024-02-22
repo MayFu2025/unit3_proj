@@ -1,5 +1,8 @@
 # Library
 
+#NOTESNOTES NOTES NOTES! Resources should be a list of dictionaries, [{resource_id : amount}, {resource_id : amount}] NEED TO EDIT ER DIAGRAM BECAUSE I ADDED COLLUMNS
+
+
 import sqlite3
 
 from kivymd.uix.button import MDFlatButton

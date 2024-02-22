@@ -1,4 +1,5 @@
 ScreenManager:
+        id: scr_manager
         # Application Startup
         StartupScreen:
                 name: "Startup"
@@ -51,11 +52,18 @@ ScreenManager:
 <Navigation>:
         type: "labeled"
         md_bg_color: '#dedede'
+        anchor: "center"
+
+        MDNavigationRailItem:
+                id: placeholder
+                icon: "headphones-box"
 
         MDNavigationRailItem:
                 id: NavHome
                 text: "Home"
                 icon: "home"
+                on_release: root.parent.parent.parent.current= "Home"
+
         MDNavigationRailItem:
                 id: NavEmployees
                 text: "Employees"
@@ -121,6 +129,91 @@ ScreenManager:
                                         font_style: "H6"
                                         pos_hint: {"center_x": .5, "center_y": .5}
                                         size_hint: 1, 0.3
+
+<EmployeeManager>:
+        BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1, 1
+
+                Navigation:
+                        size_hint: 0.1, 1
+
+                MDBoxLayout:
+                        size_hint: 0.9, 1
+                        orientation: 'vertical'
+                        md_bg_color: 'white'
+                        padding: 50
+
+                        MDLabel:
+                                text: "Employee Manager"
+                                padding: 20
+                                halign: "left"
+                                font_style: "H3"
+                                size_hint: 1, 0.3
+
+
+<InventoryManager>:
+        BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1, 1
+
+                Navigation:
+                        size_hint: 0.1, 1
+
+                MDBoxLayout:
+                        size_hint: 0.9, 1
+                        orientation: 'vertical'
+                        md_bg_color: 'white'
+                        padding: 50
+
+                        MDLabel:
+                                text: "This is Inventory"
+                                halign: "center"
+                                font_style: "H3"
+                                pos_hint: {"center_x": .5, "center_y": .5}
+                                size_hint: 1, 0.3
+
+<OrderManager>:
+        BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1, 1
+
+                Navigation:
+                        size_hint: 0.1, 1
+
+                MDBoxLayout:
+                        size_hint: 0.9, 1
+                        orientation: 'vertical'
+                        md_bg_color: 'white'
+                        padding: 50
+
+                        MDLabel:
+                                text: "This is Orders"
+                                halign: "center"
+                                font_style: "H3"
+                                pos_hint: {"center_x": .5, "center_y": .5}
+                                size_hint: 1, 0.3
+
+<FinanceManager>:
+        BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1, 1
+
+                Navigation:
+                        size_hint: 0.1, 1
+
+                MDBoxLayout:
+                        size_hint: 0.9, 1
+                        orientation: 'vertical'
+                        md_bg_color: 'white'
+                        padding: 50
+
+                        MDLabel:
+                                text: "This is Finance"
+                                halign: "center"
+                                font_style: "H3"
+                                pos_hint: {"center_x": .5, "center_y": .5}
+                                size_hint: 1, 0.3
 
 <BackButton>:
         MDRectangleFlatIconButton:
