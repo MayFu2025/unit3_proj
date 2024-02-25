@@ -42,6 +42,7 @@ class StartupScreen(MDScreen):
         if len(errors) > 0:
             show_popup(self, errors)
         else:
+            app.current_account = [firstname, lastname]
             self.parent.current = "Home"
 
 
@@ -65,20 +66,33 @@ class EmployeeManager(MDScreen):
 
     # Making a Table
     def on_pre_enter(self, *args): #'*args' means it doesn't know what the arguments will be
-        columns_names = [('First Name', 50), ('Last Name', 50), ('Admin Status', 50)]
+        columns_names = [('First Name', 100), ('Last Name', 100), ('Admin Status', 100)]
         self.employee_table = MDDataTable(
-            size_hint = (0.8, 0.5),
-            pos_hint = {'center_x':0.5, 'center_y':0.5},
+            size_hint = (0.8, 0.9),
+            pos_hint = {'center_x':0.55, 'center_y':0.5},
             use_pagination = False,
             check = True,
             column_data = columns_names
         )
-        self.data_tables.bind(on_row_press=self.row_pressed)  # bind a function to function
-        self.data_tables.bind(on_check_press=self.checkbox_pressed)
-        self.add_widget(self.data_tables)
+        self.employee_table.bind(on_row_press=self.row_pressed)  # bind a function to function
+        self.employee_table.bind(on_check_press=self.checkbox_pressed)
+        self.add_widget(self.employee_table)
         self.update()
 
+    def update(self):
+        data = app.db.search(query='Select first_name, last_name, is_admin from users', multiple=True)
+        self.employee_table.update_row_data(None, data)
 
+    def row_pressed(self, table, cell):
+        print(f"Value clicked: {cell.text}")
+
+    def checkbox_pressed(self, table, current_row):
+        print(f"Record checked: {current_row}")
+        # Here you could delete or update the record
+
+    def check_admin(self):
+        query = f"select is_admin from users where first_name='{current_account[0]}' and last_name='{current_account[1]}'"
+        app.db.run_query()
 class InventoryManager(MDScreen):
     pass
 
@@ -92,6 +106,8 @@ class FinanceManager(MDScreen):
 
 
 class app(MDApp):
+    db = DatabaseWorker('database.db')
+    current_user = []
     def build(self):
         Window.size = 1200, 1000
         return
