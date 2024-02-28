@@ -139,9 +139,9 @@ ScreenManager:
                         size_hint: 0.1, 1
 
                 MDBoxLayout:
-                        size_hint: 0.9, 1
+                        size_hint: 1, 1
                         orientation: 'vertical'
-                        md_bg_color: 'white'
+                        md_bg_color: 'grey'
                         padding: 50
 
                         MDLabel:
@@ -149,7 +149,21 @@ ScreenManager:
                                 padding: 20
                                 halign: "left"
                                 font_style: "H3"
-                                size_hint: 1, 0.3
+                                size_hint: 1, 0.15
+
+                        MDBoxLayout:
+                                size_hint: 1, 0.85
+                                md_bg_color: 'white'
+                                orientation: 'horizontal'
+
+                                MDCard:
+                                        size_hint: 0.7, 1
+
+                                MDBoxLayout:
+                                        size_hint: 0.3, 1
+                                        md_bg_color: 'black'
+
+
 
 
 <InventoryManager>:

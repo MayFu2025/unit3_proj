@@ -66,10 +66,10 @@ class EmployeeManager(MDScreen):
 
     # Making a Table
     def on_pre_enter(self, *args): #'*args' means it doesn't know what the arguments will be
-        columns_names = [('First Name', 100), ('Last Name', 100), ('Admin Status', 100)]
+        columns_names = [('First Name', 100), ('Last Name', 100), ('Admin Status', 50)]
         self.employee_table = MDDataTable(
-            size_hint = (0.8, 0.9),
-            pos_hint = {'center_x':0.55, 'center_y':0.5},
+            size_hint = (0.6, 0.8),
+            pos_hint = {'center_x':0.41, 'center_y':0.43},
             use_pagination = False,
             check = True,
             column_data = columns_names
