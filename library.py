@@ -67,14 +67,14 @@ def check_username(username: str) -> bool:
 
 
 # Function for showing error
-def show_popup(screen, messages: list):
+def show_popup(screen, messages: list, text: str):
     """Function displays a dialog that prints each error from the list errors."""
     display = "\n".join(messages)
     screen.dialog = MDDialog(
         text=display,
         buttons=[
             MDFlatButton(
-                text="OK",
+                text=text,
                 on_press=lambda x: screen.dialog.dismiss()
             )
         ]

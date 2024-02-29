@@ -40,7 +40,7 @@ class StartupScreen(MDScreen):
                 errors.append("Password is incorrect.")
 
         if len(errors) > 0:
-            show_popup(self, errors)
+            show_popup(self, errors, "OK")
         else:
             app.current_account = [firstname, lastname]
             self.parent.current = "Home"
@@ -63,6 +63,7 @@ class EmployeeManager(MDScreen):
         super().__init__(*args, **kwargs)
         self.employee_table = None
         self.selected_rows = []  # List to keep track which rows were selected
+        self.dialog = None
 
     # Making a Table
     def on_pre_enter(self, *args): #'*args' means it doesn't know what the arguments will be
@@ -93,6 +94,10 @@ class EmployeeManager(MDScreen):
     def check_admin(self):
         query = f"select is_admin from users where first_name='{current_account[0]}' and last_name='{current_account[1]}'"
         app.db.run_query()
+
+    def add_employee(self):
+        show_popup(screen=self, messages=[], text="Ok")
+
 class InventoryManager(MDScreen):
     pass
 

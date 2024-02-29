@@ -157,11 +157,69 @@ ScreenManager:
                                 orientation: 'horizontal'
 
                                 MDCard:
+                                        id: placeholder
                                         size_hint: 0.7, 1
 
                                 MDBoxLayout:
                                         size_hint: 0.3, 1
-                                        md_bg_color: 'black'
+                                        orientation: 'vertical'
+
+                                        MDLabel:
+                                                size_hint: (1, 0.1)
+                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                                text: 'Filters'
+                                                font_style: "H5"
+                                                padding_x: 20
+
+                                        MDRaisedButton:
+                                                size_hint: (0.9, 0.05)
+                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                                text: "by First Name"
+                                        MDRaisedButton:
+                                                size_hint: (0.9, 0.05)
+                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                                text: "by Last Name"
+                                        MDRaisedButton:
+                                                size_hint: (0.9, 0.05)
+                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                                text: "by Admin Status"
+
+                                        MDLabel:
+                                                size_hint: (1, 0.1)
+                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                                text: 'Add New Employee'
+                                                font_style: "H5"
+                                                padding_x: 20
+
+                                        MDTextField:
+                                                id: new_firstname
+                                                icon_left: 'account'
+                                                size_hint: (0.9, 0.1)
+                                                size_hint_x: 0.9
+                                                pos_hint: {"center_x": .5, "center_y": .5}
+                                        MDTextField:
+                                                id: new_lastname
+                                                icon_left: 'account'
+                                                size_hint: (0.9, 0.1)
+                                                size_hint_x: 0.9
+                                                pos_hint: {"center_x": .5, "center_y": .5}
+                                        MDTextField:
+                                                id: new_password
+                                                icon_left: 'key'
+                                                size_hint: (0.9, 0.1)
+                                                size_hint_x: 0.9
+                                                pos_hint: {"center_x": .5, "center_y": .5}
+                                                password: True
+                                        MDRaisedButton:
+                                                size_hint: (0.9, 0.05)
+                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                                text: "Is Admin"
+                                        MDRaisedButton:
+                                                size_hint: (0.9, 0.1)
+                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                                text: "Create account"
+
+
 
 
 
