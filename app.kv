@@ -266,27 +266,49 @@ ScreenManager:
                 MDBoxLayout:
                         size_hint: 0.9, 1
                         orientation: 'vertical'
+                        spacing: 20
 
-                        MDLabel:
+                        MDLabel:  #I want padding for the bottom of the cards
                                 text: "This is Orders"
-                                halign: "center"
                                 font_style: "H3"
-                                size_hint: 1, 0.1
-
-                        MDBoxLayout:
-                                size_hint: 0.9, 1
-                                orientation: 'horizontal'
+                                size_hint: 1, 0.2
                                 padding: 50
 
+                        MDBoxLayout:
+                                size_hint: 0.9, 0.9
+                                orientation: 'horizontal'
+                                spacing: 20
+                                pos_hint: {'center_x':0.5, 'center_y':0.5}
+
                                 MDBoxLayout:
-                                        size_hint: 0.5, 1
+                                        size_hint: 0.3, 1
                                         orientation: 'vertical'
+                                        spacing: 20
+                                        MDCard:
+                                                md_bg_color: 'blue'
+                                        MDCard:
+                                                md_bg_color: 'blue'
                                         MDCard:
                                                 md_bg_color: 'blue'
                                 MDBoxLayout:
-                                        size_hint: 0.5, 1
+                                        size_hint: 0.3, 1
                                         orientation: 'vertical'
+                                        spacing: 20
+                                        MDCard:
+                                                md_bg_color: 'blue'
+                                        MDCard:
+                                                md_bg_color: 'blue'
+                                        MDCard:
+                                                md_bg_color: 'blue'
 
+                                MDBoxLayout:
+                                        size_hint: 0.3, 1
+                                        orientation: 'vertical'
+                                        spacing: 20
+                                        MDCard:
+                                                md_bg_color: 'blue'
+                                        MDCard:
+                                                md_bg_color: 'blue'
                                         MDCard:
                                                 md_bg_color: 'blue'
 
