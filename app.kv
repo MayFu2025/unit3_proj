@@ -141,101 +141,114 @@ ScreenManager:
                         size_hint: 0.1, 1
 
                 MDBoxLayout:
-                        size_hint: 1, 0.85
-                        orientation: 'vertical'
+                        size_hint: 1, 1
+                        orientation: 'horizontal'
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                         padding: 50
 
-                        MDLabel:
-                                text: "Employee Manager"
-                                padding: 20
-                                halign: "left"
-                                font_style: "H3"
-                                size_hint: 1, 0.15
+                        MDBoxLayout:
+                                id: placeholder
+                                size_hint: 0.7, 1
+
+                                MDLabel:
+                                        text: "Employee Manager"
+                                        padding: 20
+                                        pos_hint: {'center_x': 0.1, 'center_y': 0.95}
+                                        halign: "left"
+                                        font_style: "H3"
+                                        size_hint: 1, 0.15
 
                         MDBoxLayout:
-                                size_hint: 1, 0.85
-                                orientation: 'horizontal'
+                                size_hint: 0.3, 1
+                                orientation: 'vertical'
+                                md_bg_color: 'gray'
+                                padding: 10
 
+                                MDLabel:
+                                        size_hint: (1, 0.1)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: 'Sort list'
+                                        font_style: "H6"
+
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "by First Name"
+                                        on_press: root.update("first_name")
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "by Last Name"
+                                        on_press: root.update("last_name")
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "by Admin Status"
+                                        on_press: root.update("is_admin desc")
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "by ID"
+                                        on_press: root.update()
+
+                                MDLabel:
+                                        size_hint: (1, 0.1)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: 'Edit Selection'
+                                        font_style: "H6"
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "Change Admin Status"
+                                        on_press: root.edit_admin()
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "Delete User"
+                                        on_press: root.delete_user()
+
+                                MDLabel:
+                                        size_hint: (1, 0.1)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: 'Add New Employee'
+                                        font_style: "H6"
+
+
+                                MDTextField:
+                                        id: new_firstname
+                                        icon_left: 'account'
+                                        size_hint: (0.8, 0.08)
+                                        size_hint_x: 0.9
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+                                MDTextField:
+                                        id: new_lastname
+                                        icon_left: 'account'
+                                        size_hint: (0.8, 0.08)
+                                        size_hint_x: 0.9
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+                                MDTextField:
+                                        id: new_password
+                                        icon_left: 'key'
+                                        size_hint: (0.8, 0.08)
+                                        size_hint_x: 0.9
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+                                        password: True
                                 MDBoxLayout:
-                                        id: placeholder
-                                        size_hint: 0.7, 1
-                                        MDFloatingActionButton:
-                                                icon: "android"
-                                                md_bg_color: "blue"
-
-                                MDBoxLayout:
-                                        size_hint: 0.3, 1
-                                        orientation: 'vertical'
-                                        padding: 10
-
+                                        size_hint: 0.9, 0.1
+                                        orientation: 'horizontal'
+                                        MDCheckbox:
+                                                id: new_admin
+                                                size_hint: (0.25, 1)
+                                                pos_hint: {'center_x': .5, 'center_y': .5}
+                                                on_active: root.admin_status_checkbox(*args)
                                         MDLabel:
-                                                size_hint: (1, 0.1)
-                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
-                                                text: 'Sort list'
-                                                font_style: "H6"
-
-                                        MDRaisedButton:
-                                                size_hint: (0.9, 0.05)
-                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
-                                                text: "by First Name"
-                                                on_press: root.update("first_name")
-                                        MDRaisedButton:
-                                                size_hint: (0.9, 0.05)
-                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
-                                                text: "by Last Name"
-                                                on_press: root.update("last_name")
-                                        MDRaisedButton:
-                                                size_hint: (0.9, 0.05)
-                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
-                                                text: "by Admin Status"
-                                                on_press: root.update("is_admin desc")
-                                        MDRaisedButton:
-                                                size_hint: (0.9, 0.05)
-                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
-                                                text: "by ID"
-                                                on_press: root.update()
-
-                                        MDLabel:
-                                                size_hint: (1, 0.1)
-                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
-                                                text: 'Add New Employee'
-                                                font_style: "H6"
-
-                                        MDTextField:
-                                                id: new_firstname
-                                                icon_left: 'account'
-                                                size_hint: (0.8, 0.08)
-                                                size_hint_x: 0.9
-                                                pos_hint: {"center_x": .5, "center_y": .5}
-                                        MDTextField:
-                                                id: new_lastname
-                                                icon_left: 'account'
-                                                size_hint: (0.8, 0.08)
-                                                size_hint_x: 0.9
-                                                pos_hint: {"center_x": .5, "center_y": .5}
-                                        MDTextField:
-                                                id: new_password
-                                                icon_left: 'key'
-                                                size_hint: (0.8, 0.08)
-                                                size_hint_x: 0.9
-                                                pos_hint: {"center_x": .5, "center_y": .5}
-                                                password: True
-                                        MDBoxLayout:
-                                                size_hint: 0.9, 0.1
-                                                orientation: 'horizontal'
-                                                MDCheckbox:
-                                                        id: new_admin
-                                                        size_hint: (0.25, 1)
-                                                        pos_hint: {'center_x': .5, 'center_y': .5}
-                                                        on_active: root.check_admin_status(*args)
-                                                MDLabel:
-                                                        size_hint: (0.75, 1)
-                                                        text: "Give Admin Status"
-                                        MDRaisedButton:
-                                                size_hint: (0.9, 0.05)
-                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
-                                                text: "Create account"
-                                                on_press: root.try_create()
+                                                size_hint: (0.75, 1)
+                                                text: "Give Admin Status"
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "Create account"
+                                        on_press: root.try_create()
 
 
 

@@ -71,21 +71,26 @@ class EmployeeManager(MDScreen):
         self.dialog = None
         self.new_admin = False
 
+    def on_enter(self):
+        self.ids.new_firstname.text = ""
+        self.ids.new_lastname.text = ""
+        self.ids.new_password.text = ""
+
     # Making a Table
     def on_pre_enter(self, *args):  # '*args' means it doesn't know what the arguments will be
         columns_names = [('id', 50), ('First Name', 85), ('Last Name', 85), ('Admin Status', 50)]
         self.employee_table = MDDataTable(
             size_hint=(0.6, 0.8),
-            pos_hint={'center_x': 0.41, 'center_y': 0.43},
+            pos_hint={'center_x': 0.41, 'center_y': 0.45},
             use_pagination=False,
             check=True,
             column_data=columns_names
         )
-        self.employee_table.bind(on_check_press=self.checkbox_pressed) # bind a function to function
+        self.employee_table.bind(on_check_press=self.checkbox_pressed)  # bind a function to function
         self.add_widget(self.employee_table)
         self.update()
 
-    def update(self, sort = None):
+    def update(self, sort=None):
         query = 'Select id, first_name, last_name, is_admin from users'
         if sort is not None:
             query += f' order by {sort.strip("")}'
@@ -101,7 +106,7 @@ class EmployeeManager(MDScreen):
             self.selected_rows.remove(current_row[0])
         print(self.selected_rows)
 
-    def check_admin_status(self, checkbox, value):
+    def admin_status_checkbox(self, checkbox, value):
         self.new_admin = False
         if value:
             self.new_admin = True
@@ -125,7 +130,35 @@ class EmployeeManager(MDScreen):
                 print(firstname, lastname, password, admin)
                 App.db.run_query(
                     query=f'insert into users(first_name, last_name, password, is_admin) values("{firstname}", "{lastname}", "{make_hash(password)}", {admin})')
-                errors.append("User creation successful.")
+                errors.append("User created successfully.")
+
+        show_popup(screen=self, messages=errors, text="OK")
+        self.update()
+
+    def delete_user(self):
+        errors = []
+        if not check_admin(App.current_user):
+            errors.append("You do not have these permissions.")
+        elif len(self.selected_rows) == 0:
+            errors.append("No users selected.")
+        else:
+            for ids in self.selected_rows:
+                App.db.run_query(query=f"delete from users where id={ids}")
+            errors.append("User(s) deleted successfully.")
+        show_popup(screen=self, messages=errors, text="OK")
+        self.update()
+
+    def edit_admin(self):
+        errors = []
+        if not check_admin(App.current_user):
+            errors.append("You do not have these permissions.")
+        elif len(self.selected_rows) == 0:
+            errors.append("No users selected.")
+        else:
+            for ids in self.selected_rows:
+                query = f"update users set is_admin= not(select is_admin where id = {ids}) where id={ids}"
+                App.db.run_query(query=query)
+            errors.append("Permissions changed successfully.")
 
         show_popup(screen=self, messages=errors, text="OK")
         self.update()
