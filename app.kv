@@ -26,6 +26,7 @@ ScreenManager:
 
                 MDTextField:
                         id: firstname
+                        hint_text: 'Enter first name'
                         icon_left: 'account'
                         size_hint_x: 0.7
                         pos_hint: {"center_x": .5, "center_y": .5}
@@ -39,6 +40,7 @@ ScreenManager:
 
                 MDTextField:
                         id: pword
+                        hint_text: 'Enter password'
                         icon_left: 'key'
                         size_hint_x: 0.7
                         pos_hint: {"center_x": .5, "center_y": .5}
@@ -87,7 +89,7 @@ ScreenManager:
         MDNavigationRailItem:
                 text: "Log out"
                 icon: "logout"
-                on_release: root.parent.parent.parent.current= "Startup"
+                on_release: root.logout()
 
 <HomeScreen>:
         BoxLayout:
@@ -141,7 +143,6 @@ ScreenManager:
                 MDBoxLayout:
                         size_hint: 1, 1
                         orientation: 'vertical'
-                        md_bg_color: 'grey'
                         padding: 50
 
                         MDLabel:
@@ -153,7 +154,6 @@ ScreenManager:
 
                         MDBoxLayout:
                                 size_hint: 1, 0.85
-                                md_bg_color: 'white'
                                 orientation: 'horizontal'
 
                                 MDCard:
@@ -163,13 +163,13 @@ ScreenManager:
                                 MDBoxLayout:
                                         size_hint: 0.3, 1
                                         orientation: 'vertical'
+                                        padding: 10
 
                                         MDLabel:
                                                 size_hint: (1, 0.1)
                                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
                                                 text: 'Filters'
-                                                font_style: "H5"
-                                                padding_x: 20
+                                                font_style: "H6"
 
                                         MDRaisedButton:
                                                 size_hint: (0.9, 0.05)
@@ -183,41 +183,52 @@ ScreenManager:
                                                 size_hint: (0.9, 0.05)
                                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
                                                 text: "by Admin Status"
+                                        MDRaisedButton:
+                                                size_hint: (0.9, 0.05)
+                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                                text: "Show all"
 
                                         MDLabel:
                                                 size_hint: (1, 0.1)
                                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
                                                 text: 'Add New Employee'
-                                                font_style: "H5"
-                                                padding_x: 20
+                                                font_style: "H6"
 
                                         MDTextField:
                                                 id: new_firstname
                                                 icon_left: 'account'
-                                                size_hint: (0.9, 0.1)
+                                                size_hint: (0.8, 0.08)
                                                 size_hint_x: 0.9
                                                 pos_hint: {"center_x": .5, "center_y": .5}
                                         MDTextField:
                                                 id: new_lastname
                                                 icon_left: 'account'
-                                                size_hint: (0.9, 0.1)
+                                                size_hint: (0.8, 0.08)
                                                 size_hint_x: 0.9
                                                 pos_hint: {"center_x": .5, "center_y": .5}
                                         MDTextField:
                                                 id: new_password
                                                 icon_left: 'key'
-                                                size_hint: (0.9, 0.1)
+                                                size_hint: (0.8, 0.08)
                                                 size_hint_x: 0.9
                                                 pos_hint: {"center_x": .5, "center_y": .5}
                                                 password: True
+                                        MDBoxLayout:
+                                                size_hint: 0.9, 0.1
+                                                orientation: 'horizontal'
+                                                MDCheckbox:
+                                                        id: new_admin
+                                                        size_hint: (0.25, 1)
+                                                        pos_hint: {'center_x': .5, 'center_y': .5}
+                                                        on_active: root.check_admin_status(*args)
+                                                MDLabel:
+                                                        size_hint: (0.75, 1)
+                                                        text: "Give Admin Status"
                                         MDRaisedButton:
                                                 size_hint: (0.9, 0.05)
                                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
-                                                text: "Is Admin"
-                                        MDRaisedButton:
-                                                size_hint: (0.9, 0.1)
-                                                pos_hint: {'center_x':0.5, 'center_y':0.5}
                                                 text: "Create account"
+                                                on_press: root.try_create()
 
 
 
