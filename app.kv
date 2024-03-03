@@ -141,7 +141,7 @@ ScreenManager:
                         size_hint: 0.1, 1
 
                 MDBoxLayout:
-                        size_hint: 1, 1
+                        size_hint: 1, 0.85
                         orientation: 'vertical'
                         padding: 50
 
@@ -156,9 +156,12 @@ ScreenManager:
                                 size_hint: 1, 0.85
                                 orientation: 'horizontal'
 
-                                MDCard:
+                                MDBoxLayout:
                                         id: placeholder
                                         size_hint: 0.7, 1
+                                        MDFloatingActionButton:
+                                                icon: "android"
+                                                md_bg_color: "blue"
 
                                 MDBoxLayout:
                                         size_hint: 0.3, 1
@@ -168,25 +171,29 @@ ScreenManager:
                                         MDLabel:
                                                 size_hint: (1, 0.1)
                                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
-                                                text: 'Filters'
+                                                text: 'Sort list'
                                                 font_style: "H6"
 
                                         MDRaisedButton:
                                                 size_hint: (0.9, 0.05)
                                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
                                                 text: "by First Name"
+                                                on_press: root.update("first_name")
                                         MDRaisedButton:
                                                 size_hint: (0.9, 0.05)
                                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
                                                 text: "by Last Name"
+                                                on_press: root.update("last_name")
                                         MDRaisedButton:
                                                 size_hint: (0.9, 0.05)
                                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
                                                 text: "by Admin Status"
+                                                on_press: root.update("is_admin desc")
                                         MDRaisedButton:
                                                 size_hint: (0.9, 0.05)
                                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
-                                                text: "Show all"
+                                                text: "by ID"
+                                                on_press: root.update()
 
                                         MDLabel:
                                                 size_hint: (1, 0.1)

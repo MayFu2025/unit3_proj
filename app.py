@@ -9,7 +9,8 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.icon_definitions import md_icons
 
 import library
-from library import DatabaseWorker, check_hash_match, show_popup, check_admin
+from library import DatabaseWorker, make_hash, check_hash_match, show_popup, check_admin
+
 
 class StartupScreen(MDScreen):
     def __init__(self, *args, **kwargs):
@@ -29,7 +30,8 @@ class StartupScreen(MDScreen):
         pword = self.ids.pword.text
 
         # Check if employee exists
-        result = App.db.search(f"SELECT password, is_admin FROM users WHERE first_name = '{firstname}' and last_name='{lastname}'")
+        result = App.db.search(
+            f"SELECT password, is_admin FROM users WHERE first_name = '{firstname}' and last_name='{lastname}'")
         print(result)
         if result is None:
             errors.append("Employee does not exist.")
@@ -45,12 +47,13 @@ class StartupScreen(MDScreen):
 
 
 class Navigation(MDNavigationRail):
-    def try_change(self, destination:str):
+    def try_change(self, destination: str):
         print(self.parent.ids)
 
     def logout(self):
         App.current_user = []
         self.parent.parent.parent.current = "Startup"
+
 
 class BackButton(MDFlatButton):
     pass
@@ -69,30 +72,34 @@ class EmployeeManager(MDScreen):
         self.new_admin = False
 
     # Making a Table
-    def on_pre_enter(self, *args): #'*args' means it doesn't know what the arguments will be
-        columns_names = [('First Name', 110), ('Last Name', 110), ('Admin Status', 50)]
+    def on_pre_enter(self, *args):  # '*args' means it doesn't know what the arguments will be
+        columns_names = [('id', 50), ('First Name', 85), ('Last Name', 85), ('Admin Status', 50)]
         self.employee_table = MDDataTable(
-            size_hint = (0.6, 0.8),
-            pos_hint = {'center_x':0.41, 'center_y':0.43},
-            use_pagination = False,
-            check = True,
-            column_data = columns_names
+            size_hint=(0.6, 0.8),
+            pos_hint={'center_x': 0.41, 'center_y': 0.43},
+            use_pagination=False,
+            check=True,
+            column_data=columns_names
         )
-        self.employee_table.bind(on_row_press=self.row_pressed)  # bind a function to function
-        self.employee_table.bind(on_check_press=self.checkbox_pressed)
+        self.employee_table.bind(on_check_press=self.checkbox_pressed) # bind a function to function
         self.add_widget(self.employee_table)
         self.update()
 
-    def update(self):
-        data = App.db.search(query='Select first_name, last_name, is_admin from users', multiple=True)
+    def update(self, sort = None):
+        query = 'Select id, first_name, last_name, is_admin from users'
+        if sort is not None:
+            query += f' order by {sort.strip("")}'
+        print(query)
+        data = App.db.search(query=query, multiple=True)
         self.employee_table.update_row_data(None, data)
-
-    def row_pressed(self, table, cell): # Don't think we need this
-        print(f"Value clicked: {cell.text}")
 
     def checkbox_pressed(self, table, current_row):
         print(f"Record checked: {current_row}")
-        # Here you could delete or update the record
+        if current_row[0] not in self.selected_rows:
+            self.selected_rows.append(current_row[0])
+        else:
+            self.selected_rows.remove(current_row[0])
+        print(self.selected_rows)
 
     def check_admin_status(self, checkbox, value):
         self.new_admin = False
@@ -102,7 +109,7 @@ class EmployeeManager(MDScreen):
     def try_create(self):
         errors = []
         if not check_admin(App.current_user):
-            errors += "You do not have these permissions."
+            errors.append("You do not have these permissions.")
         else:
             firstname = self.ids.new_firstname.text
             lastname = self.ids.new_lastname.text
@@ -110,16 +117,18 @@ class EmployeeManager(MDScreen):
             admin = self.new_admin
 
             # Check if user exists
-            result = App.db.search(query=f"SELECT * from users where first_name='{firstname}' and last_name='{lastname}'")
+            result = App.db.search(
+                query=f"SELECT * from users where first_name='{firstname}' and last_name='{lastname}'")
             if result is not None:
                 errors.append("User with same name already exists.")
             else:
                 print(firstname, lastname, password, admin)
+                App.db.run_query(
+                    query=f'insert into users(first_name, last_name, password, is_admin) values("{firstname}", "{lastname}", "{make_hash(password)}", {admin})')
                 errors.append("User creation successful.")
 
         show_popup(screen=self, messages=errors, text="OK")
-
-
+        self.update()
 
 
 class InventoryManager(MDScreen):
