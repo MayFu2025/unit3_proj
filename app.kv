@@ -267,17 +267,19 @@ ScreenManager:
                         size_hint: 0.9, 1
                         orientation: 'vertical'
                         spacing: 20
+                        padding: 50
 
                         MDLabel:  #I want padding for the bottom of the cards
                                 text: "Inventory Manager"
                                 font_style: "H3"
-                                size_hint: 1, 0.2
+                                halign: "left"
+                                pos_hint: {'center_x': 0.52, 'center_y': 1}
+                                size_hint: 1, 0.1
 
                         MDBoxLayout:
-                                size_hint: 0.9, 0.9
+                                size_hint: 1, 0.9
                                 orientation: 'horizontal'
                                 spacing: 20
-                                padding: 50
                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
 
                                 MDBoxLayout:
