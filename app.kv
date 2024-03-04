@@ -132,7 +132,7 @@ ScreenManager:
                                         pos_hint: {"center_x": .5, "center_y": .5}
                                         size_hint: 1, 0.3
 
-<EmployeeManager>:
+<EmployeeManager>: #Preferably make with classes for the little boxes
         BoxLayout:
                 orientation: 'horizontal'
                 size_hint: 1, 1
@@ -251,10 +251,6 @@ ScreenManager:
                                         on_press: root.try_create()
 
 
-
-
-
-
 <InventoryManager>:
         BoxLayout:
                 orientation: 'horizontal'
@@ -299,6 +295,7 @@ ScreenManager:
                                                                 pos_hint: {"top": 0.98, "right": 0.98}
                                                                 md_bg_color: "white"
                                                                 icon_size: 70
+                                                                on_press: root.purchase_popup("wood")
 
                                                         MDLabel:
                                                                 text: "Wood"
@@ -320,6 +317,7 @@ ScreenManager:
                                                                 pos_hint: {"top": 0.98, "right": 0.98}
                                                                 md_bg_color: "white"
                                                                 icon_size: 70
+                                                                on_press: root.purchase_popup("silicone")
 
                                                         MDLabel:
                                                                 text: "Silicone"
@@ -341,6 +339,7 @@ ScreenManager:
                                                                 pos_hint: {"top": 0.98, "right": 0.98}
                                                                 md_bg_color: "white"
                                                                 icon_size: 70
+                                                                on_press: root.purchase_popup("copper")
 
                                                         MDLabel:
                                                                 text: "Copper"
@@ -368,6 +367,7 @@ ScreenManager:
                                                                 pos_hint: {"top": 0.98, "right": 0.98}
                                                                 md_bg_color: "white"
                                                                 icon_size: 70
+                                                                on_press: root.purchase_popup("carbon")
 
                                                         MDLabel:
                                                                 text: "Carbon"
@@ -389,6 +389,7 @@ ScreenManager:
                                                                 pos_hint: {"top": 0.98, "right": 0.98}
                                                                 md_bg_color: "white"
                                                                 icon_size: 70
+                                                                on_press: root.purchase_popup("foam")
 
                                                         MDLabel:
                                                                 text: "Foam"
@@ -410,6 +411,7 @@ ScreenManager:
                                                                 pos_hint: {"top": 0.98, "right": 0.98}
                                                                 md_bg_color: "white"
                                                                 icon_size: 70
+                                                                on_press: root.purchase_popup("cobalt")
 
                                                         MDLabel:
                                                                 text: "Cobalt"
@@ -437,6 +439,7 @@ ScreenManager:
                                                                 pos_hint: {"top": 0.98, "right": 0.98}
                                                                 md_bg_color: "white"
                                                                 icon_size: 70
+                                                                on_press: root.purchase_popup("aluminium")
 
                                                         MDLabel:
                                                                 text: "Aluminium"
@@ -458,6 +461,7 @@ ScreenManager:
                                                                 pos_hint: {"top": 0.98, "right": 0.98}
                                                                 md_bg_color: "white"
                                                                 icon_size: 70
+                                                                on_press: root.purchase_popup("leather")
 
                                                         MDLabel:
                                                                 text: "Leather"
@@ -479,6 +483,7 @@ ScreenManager:
                                                                 pos_hint: {"top": 0.98, "right": 0.98}
                                                                 md_bg_color: "white"
                                                                 icon_size: 70
+                                                                on_press: root.purchase_popup("lithium")
 
                                                         MDLabel:
                                                                 text: "Lithium"

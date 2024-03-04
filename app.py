@@ -5,6 +5,7 @@ from kivy.core.window import Window
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.card import MDCard
 from kivymd.uix.datatables import MDDataTable
+from kivymd.uix.label import MDLabel
 from kivymd.uix.navigationrail import MDNavigationRail
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.button import MDFlatButton
@@ -168,7 +169,33 @@ class EmployeeManager(MDScreen):
 
 
 class InventoryManager(MDScreen):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.dialog = None
+
+    def purchase_popup(self, material):
+        MDDialog(
+            title=f"Purchase {material}?",
+            text=[
+                MDLabel(
+                    text=f"Cost per unit: ${App.materials[material]}")
+
+            ],
+            buttons=[
+                MDFlatButton(
+                    text="Cancel",
+                    on_press=lambda x: self.dialog.dismiss()
+                ),
+                MDFlatButton(
+                    text="Purchase",
+                    on_press=self.dialog.dismiss() # purchase function comes here
+                )
+            ]
+            ).open()
+
+    def purchase(self, amount):
+        # Purchase (take away money and add materials)
+        self.dialog.dismiss()
 
 class ItemCard(MDCard):
     pass
@@ -185,7 +212,7 @@ class App(MDApp):
     db = DatabaseWorker('database.db')
     current_user = []
     money = 0
-
+    materials = {"wood":10,"carbon":5,"aluminium":10,"silicone":10,"foam":5,"leather":25,"cobalt":20,"copper":15,"lithium":20}
     def build(self):
         Window.size = 1200, 1000
         return
