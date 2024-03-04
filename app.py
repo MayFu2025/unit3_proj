@@ -198,7 +198,8 @@ class InventoryManager(MDScreen):
         self.dialog.dismiss()
 
 class PurchaseDialog(MDBoxLayout):
-    pass
+    def update_amount_text(self):
+        self.parent.root.ids.total_cost = f"Total cost: ${self.parent.root.ids.amount.text}"
 
 class OrderManager(MDScreen):
     pass
