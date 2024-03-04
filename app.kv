@@ -269,48 +269,161 @@ ScreenManager:
                         spacing: 20
 
                         MDLabel:  #I want padding for the bottom of the cards
-                                text: "This is Orders"
+                                text: "Inventory Manager"
                                 font_style: "H3"
                                 size_hint: 1, 0.2
-                                padding: 50
 
                         MDBoxLayout:
                                 size_hint: 0.9, 0.9
                                 orientation: 'horizontal'
                                 spacing: 20
+                                padding: 50
                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
 
                                 MDBoxLayout:
                                         size_hint: 0.3, 1
                                         orientation: 'vertical'
                                         spacing: 20
+
                                         MDCard:
-                                                md_bg_color: 'blue'
+                                                MDRelativeLayout:
+
+                                                        MDIconButton:
+                                                                icon: "plus"
+                                                                pos_hint: {"top": 1, "right": 1}
+                                                                icon_size: 70
+
+                                                        MDLabel:
+                                                                text: "Wood"
+                                                                font_size: 50
+                                                                adaptive_size: True
+                                                                pos: "15dp", "15dp"
+                                                                bold: True
                                         MDCard:
-                                                md_bg_color: 'blue'
+                                                MDRelativeLayout:
+
+                                                        MDIconButton:
+                                                                icon: "plus"
+                                                                pos_hint: {"top": 1, "right": 1}
+                                                                icon_size: 70
+
+                                                        MDLabel:
+                                                                text: "Silicone"
+                                                                font_size: 50
+                                                                adaptive_size: True
+                                                                pos: "15dp", "15dp"
+                                                                bold: True
                                         MDCard:
-                                                md_bg_color: 'blue'
-                                MDBoxLayout:
-                                        size_hint: 0.3, 1
-                                        orientation: 'vertical'
-                                        spacing: 20
-                                        MDCard:
-                                                md_bg_color: 'blue'
-                                        MDCard:
-                                                md_bg_color: 'blue'
-                                        MDCard:
-                                                md_bg_color: 'blue'
+                                                MDRelativeLayout:
+
+                                                        MDIconButton:
+                                                                icon: "plus"
+                                                                pos_hint: {"top": 1, "right": 1}
+                                                                icon_size: 70
+
+                                                        MDLabel:
+                                                                text: "Copper"
+                                                                font_size: 50
+                                                                adaptive_size: True
+                                                                pos: "15dp", "15dp"
+                                                                bold: True
 
                                 MDBoxLayout:
                                         size_hint: 0.3, 1
                                         orientation: 'vertical'
                                         spacing: 20
+
                                         MDCard:
-                                                md_bg_color: 'blue'
+                                                MDRelativeLayout:
+
+                                                        MDIconButton:
+                                                                icon: "plus"
+                                                                pos_hint: {"top": 1, "right": 1}
+                                                                icon_size: 70
+
+                                                        MDLabel:
+                                                                text: "Carbon"
+                                                                font_size: 50
+                                                                adaptive_size: True
+                                                                pos: "15dp", "15dp"
+                                                                bold: True
                                         MDCard:
-                                                md_bg_color: 'blue'
+                                                MDRelativeLayout:
+
+                                                        MDIconButton:
+                                                                icon: "plus"
+                                                                pos_hint: {"top": 1, "right": 1}
+                                                                icon_size: 70
+
+                                                        MDLabel:
+                                                                text: "Foam"
+                                                                font_size: 50
+                                                                adaptive_size: True
+                                                                pos: "15dp", "15dp"
+                                                                bold: True
                                         MDCard:
-                                                md_bg_color: 'blue'
+                                                MDRelativeLayout:
+
+                                                        MDIconButton:
+                                                                icon: "plus"
+                                                                pos_hint: {"top": 1, "right": 1}
+                                                                icon_size: 70
+
+                                                        MDLabel:
+                                                                text: "Cobalt"
+                                                                font_size: 50
+                                                                adaptive_size: True
+                                                                pos: "15dp", "15dp"
+                                                                bold: True
+
+                                MDBoxLayout:
+                                        size_hint: 0.3, 1
+                                        orientation: 'vertical'
+                                        spacing: 20
+
+                                        MDCard:
+                                                MDRelativeLayout:
+
+                                                        MDIconButton:
+                                                                icon: "plus"
+                                                                pos_hint: {"top": 1, "right": 1}
+                                                                icon_size: 70
+
+                                                        MDLabel:
+                                                                text: "Aluminium"
+                                                                font_size: 50
+                                                                adaptive_size: True
+                                                                pos: "15dp", "15dp"
+                                                                bold: True
+                                        MDCard:
+                                                MDRelativeLayout:
+
+                                                        MDIconButton:
+                                                                icon: "plus"
+                                                                pos_hint: {"top": 1, "right": 1}
+                                                                icon_size: 70
+
+                                                        MDLabel:
+                                                                text: "Leather"
+                                                                font_size: 50
+                                                                adaptive_size: True
+                                                                pos: "15dp", "15dp"
+                                                                bold: True
+                                        MDCard:
+                                                MDRelativeLayout:
+
+                                                        MDIconButton:
+                                                                icon: "plus"
+                                                                pos_hint: {"top": 1, "right": 1}
+                                                                icon_size: 70
+
+                                                        MDLabel:
+                                                                text: "Lithium"
+                                                                font_size: 50
+                                                                adaptive_size: True
+                                                                pos: "15dp", "15dp"
+                                                                bold: True
+
 
 <OrderManager>:
         BoxLayout:

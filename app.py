@@ -1,6 +1,9 @@
+from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 from kivy.core.window import Window
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.card import MDCard
 from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.navigationrail import MDNavigationRail
 from kivymd.uix.screen import MDScreen
@@ -167,6 +170,8 @@ class EmployeeManager(MDScreen):
 class InventoryManager(MDScreen):
     pass
 
+class ItemCard(MDCard):
+    pass
 
 class OrderManager(MDScreen):
     pass
@@ -179,6 +184,7 @@ class FinanceManager(MDScreen):
 class App(MDApp):
     db = DatabaseWorker('database.db')
     current_user = []
+    money = 0
 
     def build(self):
         Window.size = 1200, 1000
