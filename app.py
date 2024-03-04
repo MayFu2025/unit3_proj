@@ -11,6 +11,7 @@ from kivymd.uix.screen import MDScreen
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.icon_definitions import md_icons
+from kivymd.uix.textfield import MDTextField
 
 import library
 from library import DatabaseWorker, make_hash, check_hash_match, show_popup, check_admin
@@ -169,18 +170,16 @@ class EmployeeManager(MDScreen):
 
 
 class InventoryManager(MDScreen):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.dialog = None
 
     def purchase_popup(self, material):
-        MDDialog(
+        self.dialog = MDDialog(
             title=f"Purchase {material}?",
-            text=[
-                MDLabel(
-                    text=f"Cost per unit: ${App.materials[material]}")
-
-            ],
+            text=f"Cost per unit: ${App.materials[material]}\nCurrently have: ${App.money}",
+            type="custom",
+            content_cls=PurchaseDialog(),
             buttons=[
                 MDFlatButton(
                     text="Cancel",
@@ -188,16 +187,17 @@ class InventoryManager(MDScreen):
                 ),
                 MDFlatButton(
                     text="Purchase",
-                    on_press=self.dialog.dismiss() # purchase function comes here
+                    on_press=lambda x: self.dialog.dismiss() # purchase function comes here
                 )
             ]
-            ).open()
+            )
+        self.dialog.open()
 
     def purchase(self, amount):
         # Purchase (take away money and add materials)
         self.dialog.dismiss()
 
-class ItemCard(MDCard):
+class PurchaseDialog(MDBoxLayout):
     pass
 
 class OrderManager(MDScreen):
