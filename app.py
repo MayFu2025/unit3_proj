@@ -7,7 +7,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.card import MDCard
 from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.label import MDLabel
-from kivymd.uix.list import TwoLineIconListItem
+from kivymd.uix.list import TwoLineRightIconListItem
 from kivymd.uix.navigationrail import MDNavigationRail
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.button import MDFlatButton
@@ -212,17 +212,18 @@ class PurchaseDialog(MDBoxLayout):
 
 
 class OrderManager(MDScreen):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.orders_data = App.db.search(query="select * from orders", multiple=True)
 
     def on_pre_enter(self):
         print(self.orders_data)
         for order in self.orders_data:
             self.ids.orders_container.add_widget(
-                TwoLineIconListItem(
+                TwoLineRightIconListItem(
                     text=f"Order #{order[0]}",
-                    secondary_text=f"Date ordered: {order[1]}"
+                    secondary_text=f"Date ordered: {order[1]}",
+                    icon="package-variant-closed-check"
                 )
             )
 
