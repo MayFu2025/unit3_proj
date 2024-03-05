@@ -1,16 +1,19 @@
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager
+from kivy.uix.widget import Widget
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.card import MDCard
 from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.label import MDLabel
+from kivymd.uix.list import TwoLineIconListItem
 from kivymd.uix.navigationrail import MDNavigationRail
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.icon_definitions import md_icons
+from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.textfield import MDTextField
 
 import library
@@ -28,7 +31,7 @@ class StartupScreen(MDScreen):
         self.ids.pword.text = ""
 
     def try_login(self):
-        print("try_login called")
+        print(make_hash("test"))
         errors = []
         firstname = self.ids.firstname.text
         lastname = self.ids.lastname.text
@@ -171,6 +174,7 @@ class EmployeeManager(MDScreen):
 
 class InventoryManager(MDScreen):
     current_material = ""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.dialog = None
@@ -188,15 +192,16 @@ class InventoryManager(MDScreen):
                 ),
                 MDFlatButton(
                     text="Purchase",
-                    on_press=lambda x: self.dialog.dismiss() # purchase function comes here
+                    on_press=lambda x: self.dialog.dismiss()  # purchase function comes here
                 )
             ]
-            )
+        )
         self.dialog.open()
 
     def purchase(self, amount):
         # Purchase (take away money and add materials)
         self.dialog.dismiss()
+
 
 class PurchaseDialog(MDBoxLayout):
     # amount = ""
@@ -205,8 +210,21 @@ class PurchaseDialog(MDBoxLayout):
         self.ids.total_cost.text = f"Total cost: ${self.ids.amount.text}"  # * App.materials[InventoryManager.current_material]
         # PurchaseDialog.amount = self.ids.amount.text
 
+
 class OrderManager(MDScreen):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.orders_data = App.db.search(query="select * from orders", multiple=True)
+
+    def on_pre_enter(self):
+        print(self.orders_data)
+        for order in self.orders_data:
+            self.ids.orders_container.add_widget(
+                TwoLineIconListItem(
+                    text=f"Order #{order[0]}",
+                    secondary_text=f"Date ordered: {order[1]}"
+                )
+            )
 
 
 class FinanceManager(MDScreen):
@@ -217,7 +235,9 @@ class App(MDApp):
     db = DatabaseWorker('database.db')
     current_user = []
     money = 0
-    materials = {"wood":10,"carbon":5,"aluminium":10,"silicone":10,"foam":5,"leather":25,"cobalt":20,"copper":15,"lithium":20}
+    materials = {"wood": 10, "carbon": 5, "aluminium": 10, "silicone": 10, "foam": 5, "leather": 25, "cobalt": 20,
+                 "copper": 15, "lithium": 20}
+
     def build(self):
         Window.size = 1200, 1000
         return

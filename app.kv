@@ -523,12 +523,12 @@ ScreenManager:
                         md_bg_color: 'white'
                         padding: 50
 
-                        MDLabel:
-                                text: "This is Orders"
-                                halign: "center"
-                                font_style: "H3"
-                                pos_hint: {"center_x": .5, "center_y": .5}
-                                size_hint: 1, 0.3
+                        MDScrollView:
+                                id: orders_container
+                                orientation: 'vertical'
+                                size_hint_y: None
+                                height: self.minimum_height
+
 
 <FinanceManager>:
         BoxLayout:
