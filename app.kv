@@ -503,7 +503,9 @@ ScreenManager:
                 id: amount
                 hint_text: "Enter number between 0~100"
                 input_filter: 'int'
-                on_text: root.update_amount_text()
+                on_text:
+                        self.text = str(max(0, min(100, int(self.text or 0))))
+                        root.update_amount_text()
         MDLabel:
                 id: total_cost
                 text: "Total cost: $0"
@@ -523,11 +525,25 @@ ScreenManager:
                         md_bg_color: 'white'
                         padding: 50
 
+                        MDLabel:  #I want padding for the bottom of the cards
+                                text: "Orders Manager"
+                                font_style: "H3"
+                                halign: "left"
+                                pos_hint: {'center_x': 0.51, 'center_y': 1}
+                                size_hint: 1, 0.1
+
+                        MDTextField:
+                                hint_text: "search"
+                                icon_right: "magnify"
+                                size_hint: 0.3, 0.1
+                                valign: 'left'
+
                         MDScrollView:
                                 id: orders_container
                                 orientation: 'vertical'
                                 size_hint_y: None
-                                height: "300dp"
+                                size_hint: 1, 0.75
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
 
 <FinanceManager>:
