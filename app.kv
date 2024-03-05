@@ -502,8 +502,7 @@ ScreenManager:
                 id: amount
                 hint_text: "Enter number between 0~100"
                 input_filter: 'int'
-                on_type:
-                        root.update_amount_text()
+                on_text: root.update_amount_text()
         MDLabel:
                 id: total_cost
                 text: "Total cost: $0"
