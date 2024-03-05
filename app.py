@@ -170,10 +170,10 @@ class EmployeeManager(MDScreen):
 
 
 class InventoryManager(MDScreen):
+    current_material = ""
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.dialog = None
-        self.current_material = None
 
     def purchase_popup(self, material):
         self.dialog = MDDialog(
@@ -199,8 +199,11 @@ class InventoryManager(MDScreen):
         self.dialog.dismiss()
 
 class PurchaseDialog(MDBoxLayout):
-    def update_amount_text(self, material):
-        self.ids.total_cost.text = f"Total cost: ${self.ids.amount.text * App.materials[material]}"
+    # amount = ""
+    # cost = ""
+    def update_amount_text(self):
+        self.ids.total_cost.text = f"Total cost: ${self.ids.amount.text}"  # * App.materials[InventoryManager.current_material]
+        # PurchaseDialog.amount = self.ids.amount.text
 
 class OrderManager(MDScreen):
     pass
