@@ -257,6 +257,7 @@ class OrderManager(MDScreen):
 
     def view_details(self, order_id: int):
         self.parent.parent.parent.current = "OrderDetails"
+        
 
 
     def update(self):

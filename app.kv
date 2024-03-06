@@ -577,10 +577,119 @@ ScreenManager:
                 text: "Order Details Screen"
 
 <NewOrder>:
-        MDLabel:
-                text: "New Order Screen"
-        BackButton:
-                on_press: root.manager.current = "Orders"
+        BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1, 1
+
+                Navigation:
+                        size_hint: 0.1, 1
+
+                MDBoxLayout:
+                        size_hint: 0.9, 1
+                        orientation: 'vertical'
+                        spacing: 20
+                        padding: 50
+
+                        MDLabel:
+                                text: "Create New Order"
+                                font_style: "H3"
+                                halign: "left"
+                                pos_hint: {'center_x': 0.51, 'center_y': 1}
+                                size_hint: 1, 0.1
+
+                        MDBoxLayout:
+                                orientation: 'horizontal'
+                                size_hint: 1, 0.9
+
+                                MDBoxLayout: #left side for selection
+                                        orientation: 'vertical'
+                                        size_hint: 0.75, 1
+
+                                        MDLabel:  # Base uses 3 units of material
+                                                text: "Select the base of the headphones:"
+                                                font_style: "H5"
+                                                size_hint: 1, 0.15
+                                        MDBoxLayout:
+                                                orientation: 'horizontal'
+                                                spacing: 10
+                                                size_hint: 1, 0.1
+                                                MDChip:
+                                                        text: "Aluminium"
+                                                        icon_left: "landslide"
+                                                MDChip:
+                                                        text: "Carbon"
+                                                        icon_left: "texture-box"
+                                                MDChip:
+                                                        text: "Wood"
+                                                        icon_left: "pine-tree-variant"
+
+                                        MDLabel: # Padding uses 2 units of material
+                                                text: "Select the padding of the headphones:"
+                                                font_style: "H5"
+                                                size_hint: 1, 0.15
+                                        MDBoxLayout:
+                                                orientation: 'horizontal'
+                                                spacing: 10
+                                                size_hint: 1, 0.1
+                                                MDChip:
+                                                        text: "Foam"
+                                                        icon_left: "spray"
+                                                MDChip:
+                                                        text: "Silicone"
+                                                        icon_left: "water-check"
+                                                MDChip:
+                                                        text: "Leather"
+                                                        icon_left: "bluetooth"
+
+                                        MDLabel:  #Quality changes the amount of metals
+                                                text: "Select the quality of the speakers:"
+                                                size_hint: 1, 0.15
+                                                font_style: "H5"
+                                        MDBoxLayout:
+                                                orientation: 'horizontal'
+                                                spacing: 10
+                                                size_hint: 1, 0.1
+                                                MDChip:
+                                                        text: "Standard"
+                                                        icon_left: "emoticon-happy"
+                                                MDChip:
+                                                        text: "Gaming"
+                                                        icon_left: "controller"
+                                                MDChip:
+                                                        text: "Bass Boosted"
+                                                        icon_left: "guitar-electric"
+                                                MDChip:
+                                                        text: "Audiophile"
+                                                        icon_left: "creation-outline"
+
+                                        MDLabel: # Each just adds a specific price on top
+                                                text: "Extra options:"
+                                                font_style: "H5"
+                                                size_hint: 1, 0.15
+                                        MDBoxLayout:
+                                                orientation: 'horizontal'
+                                                spacing: 10
+                                                size_hint: 1, 0.1
+                                                MDChip:
+                                                        size_hint: 0.2, 1
+                                                        text: "Coating"
+                                                        icon_left: "spray"
+                                                MDChip:
+                                                        size_hint: 0.2, 1
+                                                        text: "Water-proof"
+                                                        icon_left: "water-check"
+                                                MDChip:
+                                                        size_hint: 0.2, 1
+                                                        text: "Bluetooth 5.0"
+                                                        icon_left: "bluetooth"
+                                MDBoxLayout:
+                                        orientation: 'vertical'
+                                        size_hint: 0.25, 1
+                                        MDLabel:
+                                                text: "test"
+
+#        BackButton: # This doesn't work because I think it tries to create the widget again
+#                on_press: root.manager.current = "Orders"
 
 
 <FinanceManager>:
