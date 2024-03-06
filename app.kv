@@ -11,6 +11,10 @@ ScreenManager:
                 name: "Inventory"
         OrderManager:
                 name: "Orders"
+        NewOrder:
+                name: "NewOrder"
+        OrderDetails:
+                name: "OrderDetails"
         FinanceManager:
                 name: "Finance"
 
@@ -532,12 +536,26 @@ ScreenManager:
                                 pos_hint: {'center_x': 0.51, 'center_y': 1}
                                 size_hint: 1, 0.1
 
-                        MDTextField:
-                                id: searchbar
-                                hint_text: "search"
-                                icon_right: "magnify"
-                                size_hint: 0.3, 0.1
-                                valign: 'left'
+                        MDBoxLayout:
+                                size_hint: 1, 0.1
+                                orientation: 'horizontal'
+
+
+                                MDTextField:
+                                        id: searchbar
+                                        hint_text: "search"
+                                        icon_right: "magnify"
+                                        size_hint: 0.5, 1
+                                        valign: 'right'
+                                MDLabel:
+                                        id: placeholder
+                                        size_hint: 0.4, 1
+                                MDIconButton:
+                                        id: show_completed
+                                        icon: 'eye-check'
+                                MDIconButton:
+                                        id: reverse_by_id
+                                        icon: 'sort-descending'
 
                         MDScrollView:
                                 id: orders_container
@@ -545,6 +563,24 @@ ScreenManager:
                                 size_hint_y: None
                                 size_hint: 1, 0.75
                                 pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+                        MDFloatingActionButton:
+                                id: new_order
+                                icon: 'plus'
+                                icon_size: 150
+                                size_hint: 0.1, 0.12
+                                pos_hint: {'right':0.95, 'bottom':0.9}
+                                on_press: root.manager.current= "NewOrder"
+
+<OrderDetails>:
+        MDLabel:
+                text: "Order Details Screen"
+
+<NewOrder>:
+        MDLabel:
+                text: "New Order Screen"
+        BackButton:
+                on_press: root.manager.current = "Orders"
 
 
 <FinanceManager>:
@@ -569,7 +605,5 @@ ScreenManager:
                                 size_hint: 1, 0.3
 
 <BackButton>:
-        MDRectangleFlatIconButton:
-                icon: "arrow-left"
-                text: "Back"
-                on_press: root.manager.current = "Startup"
+        icon: "arrow-left"
+        text: "Back"

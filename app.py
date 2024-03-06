@@ -10,7 +10,7 @@ from kivymd.uix.label import MDLabel
 from kivymd.uix.list import TwoLineRightIconListItem, TwoLineIconListItem, IconRightWidget, TwoLineListItem
 from kivymd.uix.navigationrail import MDNavigationRail
 from kivymd.uix.screen import MDScreen
-from kivymd.uix.button import MDFlatButton
+from kivymd.uix.button import MDFlatButton, MDRectangleFlatIconButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.icon_definitions import md_icons
 from kivymd.uix.scrollview import MDScrollView
@@ -75,7 +75,7 @@ class Navigation(MDNavigationRail):
         self.parent.parent.parent.current = "Startup"
 
 
-class BackButton(MDFlatButton):
+class BackButton(MDRectangleFlatIconButton):
     pass
 
 
@@ -242,7 +242,7 @@ class PurchaseDialog(MDBoxLayout):
 class OrderManager(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.orders_data = App.db.search(query="select * from orders", multiple=True)
+        self.orders_data = App.db.search(query="select * from orders where completion=FALSE", multiple=True)
 
     def on_pre_enter(self):
         print(self.orders_data)
@@ -250,19 +250,29 @@ class OrderManager(MDScreen):
             self.ids.orders_container.add_widget(
                 TwoLineListItem(
                     text=f"Order #{order[0]}",
-                    secondary_text=f"Date ordered: {order[1]}",
-                    # on_press=
+                    secondary_text=f"Date ordered: {str(order[1])[:4]}/{str(order[1])[4:6]}/{str(order[1])[6:8]}",
+                    # on_press=self.view_details(order[0])
                 )
             )
 
-    def update(self):
-        searched = self.ids.searchbar.text
-        query = f'''select * from orders
-                    where (id like '%{searched}%') or (date like '%{searched}%') or
-                    (customers.first_name like '%{searched}%') or (customers.last_name like '%{searched}%')
-                    inner join customers on orders.customer_id=customers.id)'''
-        result = App.db.search(query=query, multiple=True)
+    def view_details(self, order_id: int):
+        self.parent.parent.parent.current = "OrderDetails"
 
+
+    def update(self):
+        # searched = self.ids.searchbar.text
+        # query = f'''select * from orders
+        #             where (id like '%{searched}%') or (date like '%{searched}%') or
+        #             (customers.first_name like '%{searched}%') or (customers.last_name like '%{searched}%')
+        #             inner join customers on orders.customer_id=customers.id)'''
+        result = App.db.search(query=query, multiple=True)
+        pass
+
+class OrderDetails(MDScreen):
+    pass
+
+class NewOrder(MDScreen):
+    pass
 
 class FinanceManager(MDScreen):
     pass
