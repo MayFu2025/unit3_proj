@@ -205,7 +205,7 @@ class InventoryManager(MDScreen):
                 ),
                 MDFlatButton(
                     text="Purchase",
-                    on_press=lambda x: self.purchase()  # purchase function comes here
+                    on_press=lambda x: self.dialog.dismiss()  # purchase function comes here
                 )
             ]
         )
