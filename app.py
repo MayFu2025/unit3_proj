@@ -205,26 +205,39 @@ class InventoryManager(MDScreen):
                 ),
                 MDFlatButton(
                     text="Purchase",
-                    on_press=lambda x: self.dialog.dismiss()  # purchase function comes here
+                    on_press=lambda x: self.purchase()  # purchase function comes here
                 )
             ]
         )
         self.dialog.open()
 
-    def purchase(self, amount):
+    def purchase(self):
         # Purchase (take away money and add materials)
-        self.dialog.dismiss()
-
+        errors = []
+        cost = int(PurchaseDialog.ids.amount.text) * PurchaseDialog.material_cost
+        amount = int(PurchaseDialog.ids.amount.text)
+        if App.money < cost:  # if not sufficient money
+            errors.append("Not enough money!")
+        else:
+            App.money -= cost
+            App.db.run_query(
+                query=f"update resources set amount=((select amount from resoruces where resources.name='{InventoryManager.current_material}')+{amount}) where name={InventoryManager.current_material}")
+            errors.append("Purchase successful!")
+        show_popup(self, messages=errors, text="OK")
 
 class PurchaseDialog(MDBoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.material_cost = App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
+        self.material_cost = \
+        App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
 
     def update_amount_text(self):
         self.ids.total_cost.text = f"Total cost: ${int(self.ids.amount.text) * self.material_cost}"  # * App.materials[InventoryManager.current_material]
         # PurchaseDialog.amount = self.ids.amount.text
+
+
 1
+
 
 class OrderManager(MDScreen):
     def __init__(self, **kwargs):
@@ -243,8 +256,12 @@ class OrderManager(MDScreen):
             )
 
     def update(self):
-        pass
-
+        searched = self.ids.searchbar.text
+        query = f'''select * from orders
+                    where (id like '%{searched}%') or (date like '%{searched}%') or
+                    (customers.first_name like '%{searched}%') or (customers.last_name like '%{searched}%')
+                    inner join customers on orders.customer_id=customers.id)'''
+        result = App.db.search(query=query, multiple=True)
 
 
 class FinanceManager(MDScreen):
