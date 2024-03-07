@@ -216,32 +216,35 @@ class InventoryManager(MDScreen):
         # Purchase (take away money and add materials)
         print("test")
         errors = []
-        cost = int(PurchaseDialog.ids.amount.text) * PurchaseDialog.material_cost
-        amount = int(PurchaseDialog.ids.amount.text)
-        current_total = App.db.search(query="SELECT total FROM ledger WHERE id=(SELECT max(id) FROM ledger)")
-        if current_total < cost:  # if not sufficient money
+        current_total = App.db.search(query="SELECT total FROM ledger WHERE id=(SELECT max(id) FROM ledger)")[0]
+        print(current_total)
+        if current_total < PurchaseDialog.cost:  # if not sufficient money
             errors.append("Not enough money!")
         else:
             query = f"""insert into ledger (buy, sell, amount, total)
-                        values (1, 0, {cost}, {current_total-cost});
-                        
-                        update resources set amount=((select amount from resoruces where resources.name='{InventoryManager.current_material}')+{amount})
-                        where name={InventoryManager.current_material};"""
+                        values (1, 0, {PurchaseDialog.cost}, {current_total - PurchaseDialog.cost})"""
+            App.db.run_query(query=query)
+            query = f"""update resources set amount=((select amount from resources where resources.name='{InventoryManager.current_material}')+{PurchaseDialog.amount})
+                        where name='{InventoryManager.current_material}'"""
             App.db.run_query(query=query)
             errors.append("Purchase successful!")
+        self.dialog.dismiss()
         show_popup(self, messages=errors, text="OK")
 
 
 class PurchaseDialog(MDBoxLayout):
+    cost = 0
+    amount = 0
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.material_cost = \
-            App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
+        App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
 
     def update_amount_text(self):
         self.ids.total_cost.text = f"Total cost: ${int(self.ids.amount.text) * self.material_cost}"  # * App.materials[InventoryManager.current_material]
-        # PurchaseDialog.amount = self.ids.amount.text
-
+        PurchaseDialog.cost = int(self.ids.amount.text) * self.material_cost
+        PurchaseDialog.amount = int(self.ids.amount.text)
 
 
 class OrderManager(MDScreen):
