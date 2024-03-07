@@ -191,7 +191,7 @@ class InventoryManager(MDScreen):
         super().__init__(**kwargs)
         self.dialog = None
 
-    def purchase_popup(self, material):
+    def purchase_popup(self, material): #text still doesn't show up which is kinda sad but it's okay
         InventoryManager.current_material = material
         print(self)
         self.dialog = MDDialog(
