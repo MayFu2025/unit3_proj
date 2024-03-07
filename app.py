@@ -215,17 +215,21 @@ class InventoryManager(MDScreen):
     def purchase(self):
         # Purchase (take away money and add materials)
         print("test")
-        # errors = []
-        # cost = int(PurchaseDialog.ids.amount.text) * PurchaseDialog.material_cost
-        # amount = int(PurchaseDialog.ids.amount.text)
-        # if App.money < cost:  # if not sufficient money
-        #     errors.append("Not enough money!")
-        # else:
-        #     App.money -= cost
-        #     App.db.run_query(
-        #         query=f"update resources set amount=((select amount from resoruces where resources.name='{InventoryManager.current_material}')+{amount}) where name={InventoryManager.current_material}")
-        #     errors.append("Purchase successful!")
-        # show_popup(self, messages=errors, text="OK")
+        errors = []
+        cost = int(PurchaseDialog.ids.amount.text) * PurchaseDialog.material_cost
+        amount = int(PurchaseDialog.ids.amount.text)
+        current_total = App.db.search(query="SELECT total FROM ledger WHERE id=(SELECT max(id) FROM ledger)")
+        if current_total < cost:  # if not sufficient money
+            errors.append("Not enough money!")
+        else:
+            query = f"""insert into ledger (buy, sell, amount, total)
+                        values (1, 0, {cost}, {current_total-cost});
+                        
+                        update resources set amount=((select amount from resoruces where resources.name='{InventoryManager.current_material}')+{amount})
+                        where name={InventoryManager.current_material};"""
+            App.db.run_query(query=query)
+            errors.append("Purchase successful!")
+        show_popup(self, messages=errors, text="OK")
 
 
 class PurchaseDialog(MDBoxLayout):
@@ -237,10 +241,6 @@ class PurchaseDialog(MDBoxLayout):
     def update_amount_text(self):
         self.ids.total_cost.text = f"Total cost: ${int(self.ids.amount.text) * self.material_cost}"  # * App.materials[InventoryManager.current_material]
         # PurchaseDialog.amount = self.ids.amount.text
-
-    def purchase(self):
-        # Purchase (take away money and add materials)
-        print("test")
 
 
 
