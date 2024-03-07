@@ -193,6 +193,7 @@ class InventoryManager(MDScreen):
 
     def purchase_popup(self, material):
         InventoryManager.current_material = material
+        print(self)
         self.dialog = MDDialog(
             title=f"Purchase {material}?",
             text=f"Cost per unit: ${App.materials[material]}\nCurrently have: ${App.money}",
@@ -205,7 +206,7 @@ class InventoryManager(MDScreen):
                 ),
                 MDFlatButton(
                     text="Purchase",
-                    on_press=lambda x: self.dialog.dismiss()  # purchase function comes here
+                    on_press=lambda x: self.purchase()  # purchase function comes here
                 )
             ]
         )
@@ -213,30 +214,34 @@ class InventoryManager(MDScreen):
 
     def purchase(self):
         # Purchase (take away money and add materials)
-        errors = []
-        cost = int(PurchaseDialog.ids.amount.text) * PurchaseDialog.material_cost
-        amount = int(PurchaseDialog.ids.amount.text)
-        if App.money < cost:  # if not sufficient money
-            errors.append("Not enough money!")
-        else:
-            App.money -= cost
-            App.db.run_query(
-                query=f"update resources set amount=((select amount from resoruces where resources.name='{InventoryManager.current_material}')+{amount}) where name={InventoryManager.current_material}")
-            errors.append("Purchase successful!")
-        show_popup(self, messages=errors, text="OK")
+        print("test")
+        # errors = []
+        # cost = int(PurchaseDialog.ids.amount.text) * PurchaseDialog.material_cost
+        # amount = int(PurchaseDialog.ids.amount.text)
+        # if App.money < cost:  # if not sufficient money
+        #     errors.append("Not enough money!")
+        # else:
+        #     App.money -= cost
+        #     App.db.run_query(
+        #         query=f"update resources set amount=((select amount from resoruces where resources.name='{InventoryManager.current_material}')+{amount}) where name={InventoryManager.current_material}")
+        #     errors.append("Purchase successful!")
+        # show_popup(self, messages=errors, text="OK")
+
 
 class PurchaseDialog(MDBoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.material_cost = \
-        App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
+            App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
 
     def update_amount_text(self):
         self.ids.total_cost.text = f"Total cost: ${int(self.ids.amount.text) * self.material_cost}"  # * App.materials[InventoryManager.current_material]
         # PurchaseDialog.amount = self.ids.amount.text
 
+    def purchase(self):
+        # Purchase (take away money and add materials)
+        print("test")
 
-1
 
 
 class OrderManager(MDScreen):
@@ -246,19 +251,20 @@ class OrderManager(MDScreen):
 
     def on_pre_enter(self):
         print(self.orders_data)
+        print(self.ids.orders_container)
         for order in self.orders_data:
             self.ids.orders_container.add_widget(
                 TwoLineListItem(
                     text=f"Order #{order[0]}",
-                    secondary_text=f"Date ordered: {str(order[1])[:4]}/{str(order[1])[4:6]}/{str(order[1])[6:8]}",
-                    # on_press=self.view_details(order[0])
+                    secondary_text=f"Date ordered: {str(order[1])[:4]}/{str(order[1])[4:6]}/{str(order[1])[6:8]}"
                 )
             )
 
+    def on_leave(self, *args):
+        self.ids.orders_container.clear_widgets()
+
     def view_details(self, order_id: int):
         self.parent.parent.parent.current = "OrderDetails"
-        
-
 
     def update(self):
         # searched = self.ids.searchbar.text
@@ -269,11 +275,15 @@ class OrderManager(MDScreen):
         result = App.db.search(query=query, multiple=True)
         pass
 
+
 class OrderDetails(MDScreen):
     pass
 
+
 class NewOrder(MDScreen):
-    pass
+    def add_material(self, material):
+        print(material)
+
 
 class FinanceManager(MDScreen):
     pass
