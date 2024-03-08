@@ -873,7 +873,9 @@ ScreenManager:
                                                 size_hint: 0.75, 0.1
                                                 pos_hint: {'right': 1}
                                                 text: "Place Order"
-                                                on_press: root.place_order()
+                                                on_press:
+                                                        root.place_order()
+                                                        root.clear_order()
 
 
 
@@ -903,6 +905,27 @@ ScreenManager:
                                 font_style: "H3"
                                 pos_hint: {"center_x": .5, "center_y": .5}
                                 size_hint: 1, 0.3
+
+                        MDLabel:
+                                id: current_balance
+                                text: "Current Balance: $0"
+                                font_style: "H6"
+                                size_hint: 1, 0.1
+                        MDLabel:
+                                id: total_profit
+                                text: "Total Profit: $0"
+                                font_style: "H6"
+                                size_hint: 1, 0.1
+                        MDLabel:
+                                id: total_loss
+                                text: "Total Loss: $0"
+                                font_style: "H6"
+                                size_hint: 1, 0.1
+                        MDLabel:
+                                id: profitloss_ratio
+                                text: "Profit-to-Loss Ratio: "
+                                font_style: "H6"
+                                size_hint: 1, 0.1
 
 <BackButton>:
         icon: "arrow-left"

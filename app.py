@@ -216,8 +216,8 @@ class InventoryManager(MDScreen):
         if current_total < PurchaseDialog.cost:  # if not sufficient money
             errors.append("Not enough money!")
         else:
-            query = f"""insert into ledger (buy, sell, amount, total)
-                        values (1, 0, {PurchaseDialog.cost}, {current_total - PurchaseDialog.cost})"""
+            query = f"""insert into ledger (date, buy, sell, amount, total)
+                        values ({str(datetime.date.today())}, 1, 0, {PurchaseDialog.cost}, {current_total - PurchaseDialog.cost})"""
             App.db.run_query(query=query)
             query = f"""update resources set amount=((select amount from resources where resources.name='{InventoryManager.current_material}')+{PurchaseDialog.amount})
                         where name='{InventoryManager.current_material}'"""
@@ -279,7 +279,7 @@ class OrderManager(MDScreen):
         OrderManager.viewed_order = order_id
         self.parent.current = "OrderDetails"
 
-    def update(self):
+    def update(self): #TODO: update by filter
         # searched = self.ids.searchbar.text
         # query = f'''select * from orders
         #             where (id like '%{searched}%') or (date like '%{searched}%') or
@@ -426,17 +426,25 @@ class NewOrder(MDScreen):
         if len(errors) == 0:
             # Add customer if new
             if existing_address is None:
-                App.db.run_query(
-                    query=f"insert into customers(first_name, last_name, address) values('{self.ids.customer_firstname.text}', '{self.ids.customer_lastname.text}', '{self.ids.customer_address.text}')")
-            # Place new order
-            query = f"""insert into orders(date, customer_id, cost, score, creation, completion)
-                        values({str(datetime.date.today()).replace("-", "")},
+                App.db.run_query(query=f"insert into customers(first_name, last_name, address) values('{self.ids.customer_firstname.text}', '{self.ids.customer_lastname.text}', '{self.ids.customer_address.text}')")
+
+            # Place new order #TODO: may not work
+            print(self.options[0])
+            print(datetime.date.today())
+            order_description = f"A {self.options[0]} base with {self.options[1]} padding and {self.options[2]} speakers."
+            if self.options[3:]:
+                order_description += f" Added options for {', '.join(self.options[3:])}."
+
+            query = f"""insert into orders(date, customer_id, cost, score, creation, completion, description)
+                        values({datetime.date.today()},
                                 (select id from customers where first_name='{self.ids.customer_firstname.text}' and last_name='{self.ids.customer_lastname.text}'),
                                 {self.price},
                                 {self.score},
                                 false,
-                                false)"""
+                                false,
+                                '{order_description}')"""
             App.db.run_query(query=query)
+
             # Add materials to order
             order_id = App.db.search(query="select max(id) from orders")[0]
             materials = {x: self.order.count(x) for x in
@@ -450,7 +458,40 @@ class NewOrder(MDScreen):
 
 
 class FinanceManager(MDScreen):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ledger_table = None
+        self.selected_rows = []  # List to keep track which rows were selected
+        self.dialog = None
+
+    def on_pre_enter(self):
+        self.ids.current_balance.text = f"{App.db.search(query='select total from ledger where id=(select max(id) from ledger)')[0]}"
+        self.ids.total_profit.text = f"{App.db.search(query='select sum(sell) from ledger')[0]}"
+        self.ids.total_loss.text = f"{App.db.search(query='select sum(buy) from ledger')[0]}"
+        self.ids.profitloss_ratio.text = f"{App.db.search(query='select sum(sell) from ledger')[0] / App.db.search(query='select sum(buy) from ledger')[0]}"
+
+    # Making a Table
+    def on_pre_enter(self, *args):  # '*args' means it doesn't know what the arguments will be
+        columns_names = [('id', 50), ('First Name', 85), ('Last Name', 85), ('Admin Status', 50)]
+        self.ledger_table = MDDataTable(
+            size_hint=(0.6, 0.8),
+            pos_hint={'center_x': 0.41, 'center_y': 0.45},
+            use_pagination=False,
+            check=True,
+            column_data=columns_names
+        )
+        self.employee_table.bind(on_check_press=self.checkbox_pressed)  # bind a function to function
+        self.add_widget(self.employee_table)
+        self.update()
+
+    def update(self, sort=None):
+        query = 'Select id, first_name, last_name, is_admin from users'
+        if sort is not None:
+            query += f' order by {sort.strip("")}'
+        print(query)
+        data = App.db.search(query=query, multiple=True)
+        self.employee_table.update_row_data(None, data)
+
 
 
 a = App()
