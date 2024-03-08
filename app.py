@@ -10,23 +10,18 @@ from kivymd.uix.label import MDLabel
 from kivymd.uix.list import TwoLineRightIconListItem, TwoLineIconListItem, IconRightWidget, TwoLineListItem
 from kivymd.uix.navigationrail import MDNavigationRail
 from kivymd.uix.screen import MDScreen
-from kivymd.uix.button import MDFlatButton, MDRectangleFlatIconButton
+from kivymd.uix.button import MDFlatButton, MDRectangleFlatIconButton, MDIconButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.icon_definitions import md_icons
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.textfield import MDTextField
 import datetime
-
-import library
 from library import DatabaseWorker, make_hash, check_hash_match, show_popup, check_admin
 
 
 class App(MDApp):
     db = DatabaseWorker('database.db')
     current_user = []
-    money = 0
-    materials = {"wood": 10, "carbon": 5, "aluminium": 10, "silicone": 10, "foam": 5, "leather": 25, "cobalt": 20,
-                 "copper": 15, "lithium": 20}
 
     def build(self):
         Window.size = 1200, 1000
@@ -192,7 +187,7 @@ class InventoryManager(MDScreen):
         super().__init__(**kwargs)
         self.dialog = None
 
-    def purchase_popup(self, material): #TODO: text still doesn't show up which is kinda sad but it's okay
+    def purchase_popup(self, material):
         InventoryManager.current_material = material
         print(self)
         self.dialog = MDDialog(
@@ -238,10 +233,13 @@ class PurchaseDialog(MDBoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.material_cost = App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
-        self.material_owned = App.db.search(query=f"select amount from resources where name='{InventoryManager.current_material}'")[0]
+        self.material_cost = \
+        App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
+        self.material_owned = \
+        App.db.search(query=f"select amount from resources where name='{InventoryManager.current_material}'")[0]
         self.money_available = App.db.search(query="SELECT total FROM ledger WHERE id=(SELECT max(id) FROM ledger)")[0]
         self.ids.cost_amount.text = f"Currently Own: {self.material_owned}\nCost per unit: ${self.material_cost}\nMoney Available: ${self.money_available}"
+
     def update_amount_text(self):
         self.ids.total_cost.text = f"Total cost: ${int(self.ids.amount.text) * self.material_cost}"
         PurchaseDialog.cost = int(self.ids.amount.text) * self.material_cost
@@ -288,10 +286,10 @@ class NewOrder(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.speakers = {
-            "standard" : {"aluminium":1, "copper":2, "zinc":1, "lithium":1}, # Standard
-            "gaming" : {"aluminium":1, "copper":2, "zinc":1, "lithium":3}, # Longer battery life
-            "bassboosted" : {"aluminium":2, "copper":3, "zinc":2, "lithium":1}, # Larger speakers + coil power
-            "audiophile" : {"aluminium":2, "copper":2, "zinc":2, "lithium":2} # All-around
+            "standard": {"aluminium": 1, "copper": 2, "zinc": 1, "lithium": 1},  # Standard
+            "gaming": {"aluminium": 1, "copper": 2, "zinc": 1, "lithium": 3},  # Longer battery life
+            "bassboosted": {"aluminium": 2, "copper": 3, "zinc": 2, "lithium": 1},  # Larger speakers + coil power
+            "audiophile": {"aluminium": 2, "copper": 2, "zinc": 2, "lithium": 2}  # All-around
         }
         self.order = []
         self.options = ["base", "padding", "speaker"]
@@ -319,7 +317,6 @@ class NewOrder(MDScreen):
         print(self.options)
         self.update()
 
-
     def clear_order(self):
         self.order = []
         self.options = ["base", "padding", "speaker"]
@@ -329,7 +326,8 @@ class NewOrder(MDScreen):
 
     def update(self):
         # disable buttons TODO: can probably use a loop lol
-        check = {"base": ["aluminium", "carbon", "wood"], "padding": ["silicone", "foam", "leather"], "speaker": ["standard", "gaming", "bassboosted", "audiophile"]}
+        check = {"base": ["aluminium", "carbon", "wood"], "padding": ["silicone", "foam", "leather"],
+                 "speaker": ["standard", "gaming", "bassboosted", "audiophile"]}
         for n in range(3):
             if self.options[n] != list(check)[n]:
                 for material in list(check.values())[n]:
@@ -362,7 +360,8 @@ class NewOrder(MDScreen):
         # update the text
         self.ids.specifications.text = f"""Base: {self.options[0]}\nPadding: {self.options[1]}\nSpeakers: {self.options[2]}\nOptions: {', '.join(self.options[3:])}\nSustainability Score: {self.score}"""
         self.ids.price.text = f"Total Price: ${self.price}"
-    def place_order(self): #TODO where am I taking into account the options that got selected?
+
+    def place_order(self):  # TODO where am I taking into account the options that got selected?
         errors = []
         # Check for required information
         if len(self.order) < 10:  # 10 units of material is the minimum an order can have
@@ -370,16 +369,18 @@ class NewOrder(MDScreen):
 
         if self.ids.customer_firstname.text == "" or self.ids.customer_lastname.text == "":
             errors.append("Customer name is missing.")
-        else: # Customer names are present
+        else:  # Customer names are present
             # Check if existing customer or not (whether address is required)
-            existing_address = App.db.search(query=f"select address from customers where first_name='{self.ids.customer_firstname.text}' and last_name='{self.ids.customer_lastname.text}'")
+            existing_address = App.db.search(
+                query=f"select address from customers where first_name='{self.ids.customer_firstname.text}' and last_name='{self.ids.customer_lastname.text}'")
             if existing_address is None and self.ids.customer_address.text == "":
                 errors.append("New customer detected. Customer address is required.")
 
         if len(errors) == 0:
             # Add customer if new
             if existing_address is None:
-                App.db.run_query(query=f"insert into customers(first_name, last_name, address) values('{self.ids.customer_firstname.text}', '{self.ids.customer_lastname.text}', '{self.ids.customer_address.text}')")
+                App.db.run_query(
+                    query=f"insert into customers(first_name, last_name, address) values('{self.ids.customer_firstname.text}', '{self.ids.customer_lastname.text}', '{self.ids.customer_address.text}')")
             # Place new order
             query = f"""insert into orders(date, customer_id, cost, score, completion)
                         values({str(datetime.date.today()).replace("-", "")},
@@ -390,9 +391,11 @@ class NewOrder(MDScreen):
             App.db.run_query(query=query)
             # Add materials to order
             order_id = App.db.search(query="select max(id) from orders")[0]
-            materials = {x:self.order.count(x) for x in self.order}  # Make dictionary of materials in the order and their amounts
+            materials = {x: self.order.count(x) for x in
+                         self.order}  # Make dictionary of materials in the order and their amounts
             for material, amount in materials.items():
-                App.db.run_query(query=f"insert into OrdersResources(order_id, resource_id, amount) values({order_id}, (select id from resources where name='{material}'), {amount})")
+                App.db.run_query(
+                    query=f"insert into OrdersResources(order_id, resource_id, amount) values({order_id}, (select id from resources where name='{material}'), {amount})")
 
             errors.append("Order created successfully.")
         show_popup(self, messages=errors, text="OK")
