@@ -428,7 +428,7 @@ class NewOrder(MDScreen):
             if existing_address is None:
                 App.db.run_query(query=f"insert into customers(first_name, last_name, address) values('{self.ids.customer_firstname.text}', '{self.ids.customer_lastname.text}', '{self.ids.customer_address.text}')")
 
-            # Place new order #TODO: may not work
+            # Place new order
             print(self.options[0])
             print(datetime.date.today())
             order_description = f"A {self.options[0]} base with {self.options[1]} padding and {self.options[2]} speakers."
@@ -436,7 +436,7 @@ class NewOrder(MDScreen):
                 order_description += f" Added options for {', '.join(self.options[3:])}."
 
             query = f"""insert into orders(date, customer_id, cost, score, creation, completion, description)
-                        values({datetime.date.today()},
+                        values({str(datetime.date.today()).replace('-', '')},
                                 (select id from customers where first_name='{self.ids.customer_firstname.text}' and last_name='{self.ids.customer_lastname.text}'),
                                 {self.price},
                                 {self.score},
