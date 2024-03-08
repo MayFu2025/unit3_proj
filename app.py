@@ -298,7 +298,7 @@ class OrderDetails(MDScreen): #TODO:
         super().__init__(**kwargs)
         self.needed_materials = None
 
-    def on_enter(self):
+    def on_enter(self): #Todo: need to show order info
         query = f"""select resources.name, OrdersResources.amount from OrdersResources
         inner join resources on resources.id = OrdersResources.resource_id
         where OrdersResources.order_id = {OrderManager.viewed_order}
@@ -313,12 +313,21 @@ class OrderDetails(MDScreen): #TODO:
             print(OrderDetails.material_amount)
             self.ids.materials_container.add_widget(MaterialShowcase())
 
+    def complete_order(self): #TODO: box and ship
+        pass
+
 class MaterialShowcase(MDBoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self.ids.materialname.text = OrderDetails.material_name
         self.ids.materialamount.text = str(OrderDetails.material_amount)
+
+    def on_checkbox_active(self, checkbox, value): #TODO: check enough resources, if not, deactivte checkbox automatically
+        if value: #enough of that material
+            print('The checkbox', checkbox, 'is active', 'and', checkbox.state, 'state')
+        else:
+            print('The checkbox', checkbox, 'is inactive', 'and', checkbox.state, 'state')
 
 class NewOrder(MDScreen):
     def __init__(self, **kwargs):

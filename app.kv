@@ -646,6 +646,7 @@ ScreenManager:
                                                 text: "Box and Ship"
                                                 icon: "package-variant-closed"
                                                 size_hint: 0.5, 0.1
+                                                on_press: root.complete_order()
 
                                 MDBoxLayout:
                                         orientation: 'vertical'
@@ -680,6 +681,7 @@ ScreenManager:
         MDCheckbox:
                 id: materialinput
                 size_hint: 0.2, 1
+                on_active: root.on_checkbox_active(*args)
 
 
 
