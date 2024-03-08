@@ -247,9 +247,10 @@ class PurchaseDialog(MDBoxLayout):
 
 
 class OrderManager(MDScreen):
+    viewed_order = None
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.viewed_order = None
         self.orders_data = None
 
     def on_enter(self):
@@ -275,7 +276,7 @@ class OrderManager(MDScreen):
         self.ids.orders_container.clear_widgets()
 
     def view_details(self, order_id: int):
-        self.viewed_order = order_id
+        OrderManager.viewed_order = order_id
         self.parent.current = "OrderDetails"
 
     def update(self):
@@ -288,15 +289,16 @@ class OrderManager(MDScreen):
         pass
 
 
-class OrderDetails(MDScreen):
-    def __init__(self):
-        super().__init__()
+class OrderDetails(MDScreen): #TODO:
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.needed_materials = None
 
-    def on_pre_enter(self):
-        query = f"""select resources.name, amount from OrdersResources
-                where order_id = {OrderManager.viewed_order}
-                inner join resources on OrdersResources where resoruces.id = OrdersResources.id"""
+    def on_enter(self):
+        query = f"""select resources.name and OrdersResources.amount from OrdersResources
+                    inner join resources on resources.id = OrdersResources.resource_id
+                    where OrdersResources.order_id = {OrderManager.viewed_order}
+                    """
         self.needed_materials = App.db.search(query=query, multiple=True)
         print(self.needed_materials)
 
