@@ -406,7 +406,7 @@ ScreenManager:
                                         MDCard:
                                                 MDRelativeLayout:
                                                         FitImage:
-                                                                source: "assets/cobalt.png"
+                                                                source: "assets/zinc.png"
                                                                 pos_hint: {"top": 1}
                                                                 radius: (dp(16), dp(16), dp(16), dp(16))
 
@@ -415,10 +415,10 @@ ScreenManager:
                                                                 pos_hint: {"top": 0.98, "right": 0.98}
                                                                 md_bg_color: "white"
                                                                 icon_size: 70
-                                                                on_press: root.purchase_popup("cobalt")
+                                                                on_press: root.purchase_popup("zinc")
 
                                                         MDLabel:
-                                                                text: "Cobalt"
+                                                                text: "Zinc"
                                                                 font_size: 50
                                                                 theme_text_color: "Custom"
                                                                 text_color: "white"
@@ -530,12 +530,25 @@ ScreenManager:
                         md_bg_color: 'white'
                         padding: 50
 
-                        MDLabel:
-                                text: "Orders Manager"
-                                font_style: "H3"
-                                halign: "left"
-                                pos_hint: {'center_x': 0.51, 'center_y': 1}
+                        MDBoxLayout:
+                                orientation: 'horizontal'
                                 size_hint: 1, 0.1
+
+                                MDLabel:
+                                        text: "Orders Manager"
+                                        font_style: "H3"
+                                        halign: "left"
+                                        size_hint: 0.8, 1
+
+                                MDRoundFlatIconButton:
+                                        id: new_order
+                                        text: "New"
+                                        font_style: "H5"
+                                        icon: 'plus'
+                                        icon_size: 100
+                                        size_hint: 0.2, 1
+                                        on_press: root.manager.current= "NewOrder"
+
 
                         MDBoxLayout:
                                 size_hint: 1, 0.1
@@ -562,13 +575,7 @@ ScreenManager:
                                 MDList:
                                         id: orders_container
 
-                        MDFloatingActionButton:
-                                id: new_order
-                                icon: 'plus'
-                                icon_size: 150
-                                size_hint: 0.1, 0.12
-                                pos_hint: {'right':0.95, 'bottom':0.9}
-                                on_press: root.manager.current= "NewOrder"
+
 
 <OrderDetails>:
         MDLabel:
@@ -588,11 +595,13 @@ ScreenManager:
                         spacing: 20
                         padding: 50
 
+                        BackButton:
+                                on_press: root.manager.current="Orders"
+
                         MDLabel:
                                 text: "Create New Order"
                                 font_style: "H3"
                                 halign: "left"
-                                pos_hint: {'center_x': 0.51, 'center_y': 1}
                                 size_hint: 1, 0.1
 
                         MDBoxLayout:
@@ -601,9 +610,9 @@ ScreenManager:
 
                                 MDBoxLayout: #left side for selection
                                         orientation: 'vertical'
-                                        size_hint: 0.75, 1
+                                        size_hint: 0.55, 1
 
-                                        MDLabel:  # Base uses 3 units of material
+                                        MDLabel:
                                                 text: "Select the base of the headphones:"
                                                 font_style: "H5"
                                                 size_hint: 1, 0.1
@@ -613,16 +622,22 @@ ScreenManager:
                                                 spacing: 10
                                                 size_hint: 1, 0.05
                                                 MDFillRoundFlatIconButton:
+                                                        id: aluminium
                                                         text: "Aluminium"
                                                         icon: "landslide"
+                                                        on_press: root.add_material("base", "aluminium")
                                                 MDFillRoundFlatIconButton:
+                                                        id: carbon
                                                         text: "Carbon"
-                                                        icon_left: "texture-box"
+                                                        icon: "diamond-stone"
+                                                        on_press: root.add_material("base", "carbon")
                                                 MDFillRoundFlatIconButton:
+                                                        id: wood
                                                         text: "Wood"
-                                                        icon_left: "pine-tree-variant"
+                                                        icon: "pine-tree-variant"
+                                                        on_press: root.add_material("base", "wood")
 
-                                        MDLabel: # Padding uses 2 units of material
+                                        MDLabel:
                                                 text: "Select the padding of the headphones:"
                                                 font_style: "H5"
                                                 size_hint: 1, 0.1
@@ -634,19 +649,19 @@ ScreenManager:
                                                         id: foam
                                                         text: "Foam"
                                                         icon: "cloud-outline"
-                                                        on_press: root.add_material("foam")
+                                                        on_press: root.add_material("padding", "foam")
                                                 MDFillRoundFlatIconButton:
                                                         id: silicone
                                                         text: "Silicone"
-                                                        icon: "water-check"
-                                                        on_press: root.add_material("silicone")
+                                                        icon: "gamepad-round"
+                                                        on_press: root.add_material("padding", "silicone")
                                                 MDFillRoundFlatIconButton:
                                                         id: leather
                                                         text: "Leather"
                                                         icon: "cow"
-                                                        on_press: root.add_material("leather")
+                                                        on_press: root.add_material("padding", "leather")
 
-                                        MDLabel:  #Quality changes the amount of metals
+                                        MDLabel:
                                                 text: "Select the quality of the speakers:"
                                                 size_hint: 1, 0.1
                                                 font_style: "H5"
@@ -658,25 +673,25 @@ ScreenManager:
                                                         id: standard
                                                         text: "Standard"
                                                         icon: "emoticon-happy"
-                                                        on_press: root.add_material("standard")
+                                                        on_press: root.add_material("speaker", "standard")
                                                 MDFillRoundFlatIconButton:
                                                         id: gaming
                                                         text: "Gaming"
                                                         icon: "controller"
-                                                        on_press: root.add_material("gaming")
+                                                        on_press: root.add_material("speaker", "gaming")
                                                 MDFillRoundFlatIconButton:
                                                         id: bassboosted
                                                         text: "Bass Boosted"
                                                         icon: "guitar-electric"
-                                                        on_press: root.add_material("bassboosted")
+                                                        on_press: root.add_material("speaker", "bassboosted")
                                                 MDFillRoundFlatIconButton:
                                                         id: audiophile
                                                         text: "Audiophile"
                                                         icon: "creation-outline"
-                                                        on_press: root.add_material("audiophile")
+                                                        on_press: root.add_material("speaker", "audiophile")
 
                                         MDLabel: # Each just adds a specific price on top
-                                                text: "Extra options:"
+                                                text: "Extra options: (+$30 each)"
                                                 font_style: "H5"
                                                 size_hint: 1, 0.1
                                         MDBoxLayout:
@@ -684,22 +699,81 @@ ScreenManager:
                                                 spacing: 10
                                                 size_hint: 1, 0.05
                                                 MDFillRoundFlatIconButton:
+                                                        id: coating
                                                         text: "Coating"
                                                         icon: "spray"
+                                                        on_press: root.add_material("optional", "coating")
                                                 MDFillRoundFlatIconButton:
+                                                        id: waterproof
                                                         text: "Water-proof"
                                                         icon: "water-check"
+                                                        on_press: root.add_material("optional", "waterproof")
                                                 MDFillRoundFlatIconButton:
+                                                        id: bluetooth
                                                         text: "Bluetooth 5.0"
                                                         icon: "bluetooth"
+                                                        on_press: root.add_material("optional", "bluetooth")
+                                        MDBoxLayout:
+                                                size_hint: 1, 0.4
+                                                orientation: 'vertical'
+                                                spacing: 20
+
+                                                MDLabel:
+                                                        id: placeholder
+                                                        size_hint: 1, 0.2
+
+                                                MDLabel:
+                                                        id: specifications
+                                                        text: "Base:\nPadding:\nSpeaker Quality:\nOptions:\nSustainability Score:"
+                                                        font_style: 'H5'
+                                                        size_hint: 1, 0.4
+                                                MDLabel:
+                                                        id: price
+                                                        font_style: 'H5'
+                                                        text: "Total: $0"
+                                                        size_hint: 1, 0.3
+
+                                MDBoxLayout:
+                                        orientation: 'vertical'
+                                        size_hint: 0.45, 1
+                                        spacing: 20
+
+                                        MDLabel:
+                                                text: "Customer Details:"
+                                                font_style: 'H5'
+                                                size_hint: 1, 0.1
+                                        MDTextField:
+                                                id: customer_firstname
+                                                hint_text: "First Name"
+                                                icon: 'account'
+                                                size_hint: 1, 0.1
+                                        MDTextField:
+                                                id: customer_lastname
+                                                hint_text: "Last Name"
+                                                icon: 'account'
+                                                size_hint: 1, 0.1
+                                        MDTextField:
+                                                id: customer_address
+                                                hint_text: "Address"
+                                                icon: 'account'
+                                                size_hint: 1, 0.1
                                         MDBoxLayout:
                                                 id: placeholder
                                                 size_hint: 1, 0.4
-                                MDBoxLayout:
-                                        orientation: 'vertical'
-                                        size_hint: 0.25, 1
+                                        MDRaisedButton:
+                                                size_hint: 0.75, 0.1
+                                                pos_hint: {'right': 1}
+                                                text: "Clear Specifications"
+                                                on_press: root.clear_order()
+                                        MDRaisedButton:
+                                                size_hint: 0.75, 0.1
+                                                pos_hint: {'right': 1}
+                                                text: "Place Order"
+                                                on_press: root.place_order()
 
-                                        BackButton:
+
+
+
 
 #        BackButton: # This doesn't work because I think it tries to create the widget again
 #                on_press: root.manager.current = "Orders"

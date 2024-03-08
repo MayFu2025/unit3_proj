@@ -15,6 +15,7 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.icon_definitions import md_icons
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.textfield import MDTextField
+import datetime
 
 import library
 from library import DatabaseWorker, make_hash, check_hash_match, show_popup, check_admin
@@ -196,7 +197,8 @@ class InventoryManager(MDScreen):
         print(self)
         self.dialog = MDDialog(
             title=f"Purchase {material}?",
-            text=f"Cost per unit: ${App.materials[material]}\nCurrently have: ${App.money}",
+            text=f"""Cost per unit: ${App.db.search("select cost from resources where name='{material}'")}
+                    Currently have: ${App.money}""",
             type="custom",
             content_cls=PurchaseDialog(),
             buttons=[
@@ -284,8 +286,118 @@ class OrderDetails(MDScreen):
 
 
 class NewOrder(MDScreen):
-    def add_material(self, material):
-        print(material)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.speakers = {
+            "standard" : {"aluminium":1, "copper":2, "zinc":1, "lithium":1}, # Standard
+            "gaming" : {"aluminium":1, "copper":2, "zinc":1, "lithium":3}, # Longer battery life
+            "bassboosted" : {"aluminium":2, "copper":3, "zinc":2, "lithium":1}, # Larger speakers + coil power
+            "audiophile" : {"aluminium":2, "copper":2, "zinc":2, "lithium":2} # All-around
+        }
+        self.order = []
+        self.options = ["base", "padding", "speaker"]
+        self.score = 0
+        self.price = 0
+        self.dialog = None
+
+    def add_material(self, part, material):
+        if part == "base":
+            self.options[0] = material
+            for n in range(3):  # 3 units of base
+                self.order.append(material)
+        elif part == "padding":  # 2 units of padding
+            self.options[1] = material
+            for n in range(2):
+                self.order.append(material)
+        elif part == "speaker":
+            self.options[2] = material
+            for k, v in self.speakers[material].items():
+                for unit in range(v):
+                    self.order.append(k)
+        else:
+            self.options.append(material)  # Optional was selected
+        print(self.order)
+        print(self.options)
+        self.update()
+
+
+    def clear_order(self):
+        self.order = []
+        self.options = ["base", "padding", "speaker"]
+        self.score = 0
+        self.price = 0
+        self.update()
+
+    def update(self):
+        # disable buttons TODO: can probably use a loop lol
+        check = {"base": ["aluminium", "carbon", "wood"], "padding": ["silicone", "foam", "leather"], "speaker": ["standard", "gaming", "bassboosted", "audiophile"]}
+        for n in range(3):
+            if self.options[n] != list(check)[n]:
+                for material in list(check.values())[n]:
+                    self.ids[material].disabled = True
+            else:
+                for material in list(check.values())[n]:
+                    self.ids[material].disabled = False
+        if self.options[3:]:
+            for option in self.options[3:]:
+                self.ids[option].disabled = True
+        else:
+            self.ids.coating.disabled = False
+            self.ids.waterproof.disabled = False
+            self.ids.bluetooth.disabled = False
+
+        # calculate sustainability score
+        score = 0
+        for material in self.order:
+            score += App.db.search(query=f"select score from resources where name='{material}'")[0]
+        self.score = score
+
+        # calculate price
+        price = 0
+        for material in self.order:
+            price += App.db.search(query=f"select sell_price from resources where name='{material}'")[0]
+        for options in self.options[3:]:
+            price += 30
+        self.price = price
+
+        # update the text
+        # TODO: when adding more than one option, somehow the '' is not removed
+        self.ids.specifications.text = f"""Base: {self.options[0]}\nPadding: {self.options[1]}\nSpeakers: {self.options[2]}\nOptions: {', '.join(self.options[3:])}\nSustainability Score: {self.score}"""
+        self.ids.price.text = f"Total Price: ${self.price}"
+    def place_order(self):
+        errors = []
+        # Check for required information
+        if len(self.order) < 10:  # 10 units of material is the minimum an order can have
+            errors.append("One or more selections are missing.")
+
+        if self.ids.customer_firstname.text == "" or self.ids.customer_lastname.text == "":
+            errors.append("Customer name is missing.")
+        else: # Customer names are present
+            # Check if existing customer or not (whether address is required)
+            existing_address = App.db.search(query=f"select address from customers where first_name='{self.ids.customer_firstname.text}' and last_name='{self.ids.customer_lastname.text}'")
+            if existing_address is None and self.ids.customer_address.text == "":
+                errors.append("New customer detected. Customer address is required.")
+
+        if len(errors) == 0:
+            # Add customer if new
+            if existing_address is None:
+                App.db.run_query(query=f"insert into customers(first_name, last_name, address) values('{self.ids.customer_firstname.text}', '{self.ids.customer_lastname.text}', '{self.ids.customer_address.text}')")
+            # Place new order
+            query = f"""insert into orders(date, customer_id, cost, score, completion)
+                        values({str(datetime.date.today()).replace("-", "")},
+                                (select id from customers where first_name='{self.ids.customer_firstname.text}' and last_name='{self.ids.customer_lastname.text}'),
+                                {self.price},
+                                {self.score},
+                                false)"""
+            App.db.run_query(query=query)
+            # Add materials to order
+            order_id = App.db.search(query="select max(id) from orders")[0]
+            materials = {x:self.order.count(x) for x in self.order}  # Make dictionary of materials in the order and their amounts
+            for material, amount in materials.items():
+                App.db.run_query(query=f"insert into OrdersResources(order_id, resource_id, amount) values({order_id}, (select id from resources where name='{material}'), {amount})")
+
+            errors.append("Order created successfully.")
+        show_popup(self, messages=errors, text="OK")
 
 
 class FinanceManager(MDScreen):
