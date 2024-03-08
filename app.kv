@@ -582,8 +582,29 @@ ScreenManager:
 
 
 <OrderDetails>:
-        MDLabel:
-                text: "Order Details Screen"
+        BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1, 1
+
+                Navigation:
+                        size_hint: 0.1, 1
+
+                MDBoxLayout:
+                        size_hint: 0.9, 1
+                        orientation: 'vertical'
+                        spacing: 20
+                        padding: 50
+
+                        BackButton:
+                                on_press: root.manager.current="Orders"
+
+                        MDLabel:
+                                text: "Order Details:"
+                                font_style: "H3"
+                                halign: "left"
+                                size_hint: 1, 0.1
+
+
 
 <NewOrder>:
         BoxLayout:

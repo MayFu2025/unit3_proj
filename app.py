@@ -234,9 +234,9 @@ class PurchaseDialog(MDBoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.material_cost = \
-        App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
+            App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
         self.material_owned = \
-        App.db.search(query=f"select amount from resources where name='{InventoryManager.current_material}'")[0]
+            App.db.search(query=f"select amount from resources where name='{InventoryManager.current_material}'")[0]
         self.money_available = App.db.search(query="SELECT total FROM ledger WHERE id=(SELECT max(id) FROM ledger)")[0]
         self.ids.cost_amount.text = f"Currently Own: {self.material_owned}\nCost per unit: ${self.material_cost}\nMoney Available: ${self.money_available}"
 
@@ -249,24 +249,36 @@ class PurchaseDialog(MDBoxLayout):
 class OrderManager(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.orders_data = App.db.search(query="select * from orders where completion=FALSE", multiple=True)
+        self.orders_data = None
 
-    def on_pre_enter(self):
-        print(self.orders_data)
-        print(self.ids.orders_container)
+    def on_enter(self):
+        self.orders_data = App.db.search(query="select * from orders where completion=FALSE", multiple=True)
         for order in self.orders_data:
             self.ids.orders_container.add_widget(
-                TwoLineListItem(
+                MDRectangleFlatIconButton(
                     text=f"Order #{order[0]}",
-                    secondary_text=f"Date ordered: {str(order[1])[:4]}/{str(order[1])[4:6]}/{str(order[1])[6:8]}"
+                    icon=f"{self.choose_icon(order_id=order[0])}",
+                    icon_size=50,
+                    size_hint=(1,0.5),
+                    on_press= lambda x: self.view_details(order[0])
                 )
             )
+
+    def choose_icon(self, order_id):
+        if App.db.search(query=f"select completion from orders where id={order_id}")[0] == 0:
+            return "package-variant"
+        else:
+            return "package-variant-closed"
 
     def on_leave(self, *args):
         self.ids.orders_container.clear_widgets()
 
     def view_details(self, order_id: int):
-        self.parent.parent.parent.current = "OrderDetails"
+        print(order_id)
+        print(self.parent)
+        print(self.parent.parent)
+        print(self.parent.parent.parent)
+        self.parent.current = "OrderDetails"
 
     def update(self):
         # searched = self.ids.searchbar.text
@@ -382,11 +394,12 @@ class NewOrder(MDScreen):
                 App.db.run_query(
                     query=f"insert into customers(first_name, last_name, address) values('{self.ids.customer_firstname.text}', '{self.ids.customer_lastname.text}', '{self.ids.customer_address.text}')")
             # Place new order
-            query = f"""insert into orders(date, customer_id, cost, score, completion)
+            query = f"""insert into orders(date, customer_id, cost, score, creation, completion)
                         values({str(datetime.date.today()).replace("-", "")},
                                 (select id from customers where first_name='{self.ids.customer_firstname.text}' and last_name='{self.ids.customer_lastname.text}'),
                                 {self.price},
                                 {self.score},
+                                false,
                                 false)"""
             App.db.run_query(query=query)
             # Add materials to order
