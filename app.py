@@ -192,13 +192,11 @@ class InventoryManager(MDScreen):
         super().__init__(**kwargs)
         self.dialog = None
 
-    def purchase_popup(self, material): #text still doesn't show up which is kinda sad but it's okay
+    def purchase_popup(self, material): #TODO: text still doesn't show up which is kinda sad but it's okay
         InventoryManager.current_material = material
         print(self)
         self.dialog = MDDialog(
             title=f"Purchase {material}?",
-            text=f"""Cost per unit: ${App.db.search("select cost from resources where name='{material}'")}
-                    Currently have: ${App.money}""",
             type="custom",
             content_cls=PurchaseDialog(),
             buttons=[
@@ -240,11 +238,12 @@ class PurchaseDialog(MDBoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.material_cost = \
-        App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
-
+        self.material_cost = App.db.search(query=f"select cost from resources where name='{InventoryManager.current_material}'")[0]
+        self.material_owned = App.db.search(query=f"select amount from resources where name='{InventoryManager.current_material}'")[0]
+        self.money_available = App.db.search(query="SELECT total FROM ledger WHERE id=(SELECT max(id) FROM ledger)")[0]
+        self.ids.cost_amount.text = f"Currently Own: {self.material_owned}\nCost per unit: ${self.material_cost}\nMoney Available: ${self.money_available}"
     def update_amount_text(self):
-        self.ids.total_cost.text = f"Total cost: ${int(self.ids.amount.text) * self.material_cost}"  # * App.materials[InventoryManager.current_material]
+        self.ids.total_cost.text = f"Total cost: ${int(self.ids.amount.text) * self.material_cost}"
         PurchaseDialog.cost = int(self.ids.amount.text) * self.material_cost
         PurchaseDialog.amount = int(self.ids.amount.text)
 
@@ -361,10 +360,9 @@ class NewOrder(MDScreen):
         self.price = price
 
         # update the text
-        # TODO: when adding more than one option, somehow the '' is not removed
         self.ids.specifications.text = f"""Base: {self.options[0]}\nPadding: {self.options[1]}\nSpeakers: {self.options[2]}\nOptions: {', '.join(self.options[3:])}\nSustainability Score: {self.score}"""
         self.ids.price.text = f"Total Price: ${self.price}"
-    def place_order(self):
+    def place_order(self): #TODO where am I taking into account the options that got selected?
         errors = []
         # Check for required information
         if len(self.order) < 10:  # 10 units of material is the minimum an order can have
