@@ -290,17 +290,35 @@ class OrderManager(MDScreen):
 
 
 class OrderDetails(MDScreen): #TODO:
+    materials_count = None
+    material_name = None
+    material_amount = None
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.needed_materials = None
 
     def on_enter(self):
-        query = f"""select resources.name and OrdersResources.amount from OrdersResources
-                    inner join resources on resources.id = OrdersResources.resource_id
-                    where OrdersResources.order_id = {OrderManager.viewed_order}
-                    """
+        query = f"""select resources.name, OrdersResources.amount from OrdersResources
+        inner join resources on resources.id = OrdersResources.resource_id
+        where OrdersResources.order_id = {OrderManager.viewed_order}
+        """
         self.needed_materials = App.db.search(query=query, multiple=True)
         print(self.needed_materials)
+
+        for material in self.needed_materials:
+            OrderDetails.material_name = material[0]
+            print(OrderDetails.material_name)
+            OrderDetails.material_amount = material[1]
+            print(OrderDetails.material_amount)
+            self.ids.materials_container.add_widget(MaterialShowcase())
+
+class MaterialShowcase(MDBoxLayout):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.ids.materialname.text = OrderDetails.material_name
+        self.ids.materialamount.text = str(OrderDetails.material_amount)
 
 class NewOrder(MDScreen):
     def __init__(self, **kwargs):
