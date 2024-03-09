@@ -98,7 +98,8 @@ class EmployeeManager(MDScreen):
         self.employee_table = MDDataTable(
             size_hint=(0.6, 0.8),
             pos_hint={'center_x': 0.41, 'center_y': 0.45},
-            use_pagination=False,
+            use_pagination=True,
+            rows_num=10,
             check=True,
             column_data=columns_names
         )
@@ -113,6 +114,10 @@ class EmployeeManager(MDScreen):
         print(query)
         data = App.db.search(query=query, multiple=True)
         self.employee_table.update_row_data(None, data)
+
+    def on_leave(self):
+        # Including this prevents tables from being created on top of each other, which can cause shadows
+        self.remove_widget(self.employee_table)
 
     def checkbox_pressed(self, table, current_row):
         print(f"Record checked: {current_row}")
@@ -303,7 +308,7 @@ class OrderDetails(MDScreen):  # TODO:
         self.order_details = App.db.search(query=query, multiple=False)
         self.ids.order_id.text = f"Order ID: #{self.order_details[0]}"
         self.ids.order_date.text = f"Order Date: {self.order_details[1]}"
-        self.ids.customer_name.text = f"Customer Name: {App.db.search(query=f'select first_name, last_name from customers where id={self.order_details[2]}')}"
+        self.ids.customer_name.text = f"Customer Name: {' '.join(list(App.db.search(query=f'select first_name, last_name from customers where id={self.order_details[2]}')))}"
         self.ids.customer_address.text = f"Customer Address: {App.db.search(query=f'select address from customers where id={self.order_details[2]}')[0]}"
         self.ids.order_description.text = f"Order Description: {self.order_details[6]}"
         self.ids.order_price.text = f"Price: ${self.order_details[3]}"
@@ -324,6 +329,7 @@ class OrderDetails(MDScreen):  # TODO:
 
     def cancel_order(self):
         App.db.run_query(query=f"delete from orders where id={OrderManager.viewed_order}")
+        App.db.run_query(query=f"delete from OrdersResources where order_id={OrderManager.viewed_order}")
         show_popup(self, messages=["Order cancelled."], text="OK")
 
     def complete_order(self):
@@ -484,7 +490,7 @@ class FinanceManager(MDScreen):
         self.selected_rows = []  # List to keep track which rows were selected
         self.dialog = None
 
-    def on_pre_enter(self, *args):  # '*args' means it doesn't know what the arguments will be
+    def on_pre_enter(self):  # '*args' means it doesn't know what the arguments will be
         if App.db.search(query="select count(*) from ledger")[0] != 0:
             self.ids.current_total.text = f"Current Balance: ${App.db.search(query='select total from ledger where id=(select max(id) from ledger)')[0]}"
         if App.db.search(query="select count(*) from ledger where amount>0")[0] != 0:
@@ -497,16 +503,23 @@ class FinanceManager(MDScreen):
         self.ledger_table = MDDataTable(
             size_hint=(0.58, 0.8),
             pos_hint={'center_x': 0.42, 'center_y': 0.45},
-            use_pagination=False,
+            use_pagination=True,
+            rows_num=10,
             check=False,
             column_data=columns_names
         )
         self.add_widget(self.ledger_table)
         self.update()
 
+    def on_enter(self):
+        self.update()
+
+    def on_leave(self):
+        # Including this prevents tables from being created on top of each other, which can cause shadows
+        self.remove_widget(self.ledger_table)
+
     def update(self, sort=None):
         query = 'Select id, date, amount from ledger'
-
         if sort is not None:
             query += f' order by {sort.strip("")}'
 
