@@ -120,7 +120,7 @@ ScreenManager:
                 MDBoxLayout:
                         size_hint: 0.9, 1
                         orientation: 'vertical'
-                        md_bg_color: 'white'
+                        spacing: 50
 
                         FitImage:
                                 source: "assets/banner.png"
@@ -129,20 +129,17 @@ ScreenManager:
 
                         MDBoxLayout:
                                 orientation: 'vertical'
-                                size_hint: 1, 0.75
-                                padding: 20
-                                spacing: 20
-
-                                MDLabel:
-                                        id: month_label
-                                        size_hint: 1, 0.05
+                                size_hint: 0.95, 0.75
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                                spacing: 30
 
                                 MDBoxLayout:
                                         orientation: 'horizontal'
-                                        size_hint: 1, 0.45
+                                        size_hint: 1, 0.5
+                                        spacing: 20
 
                                         MDCard:
-                                                md_bg_color: 'gray'
+                                                md_bg_color: '#dedede'
                                                 MDBoxLayout:
                                                         orientation: 'vertical'
                                                         padding: 20
@@ -153,50 +150,106 @@ ScreenManager:
                                                                 halign: 'left'
                                                         MDLabel:
                                                                 id: month_total_orders
-                                                                font_style: 'H5'
+                                                                font_style: 'H4'
                                                                 bold: True
-                                                                halign: 'right'
+                                                                pos_hint: {'right':1, 'bottom':1}
                                         MDCard:
-                                                MDLabel:
-                                                        text: "Total profit gained this month:"
-                                                MDLabel:
-                                                        id: month_total_profit
+                                                md_bg_color: '#dedede'
+                                                MDBoxLayout:
+                                                        orientation: 'vertical'
+                                                        padding: 20
+
+                                                        MDLabel:
+                                                                text: "Total profit gained this month:"
+                                                                font_style: 'H6'
+                                                                halign: 'left'
+                                                        MDLabel:
+                                                                id: month_total_profit
+                                                                font_style: 'H4'
+                                                                bold: True
+                                                                pos_hint: {'right':1, 'bottom':1}
                                         MDCard:
-                                                MDLabel:
-                                                        text: "Total loss produced this month:"
-                                                MDLabel:
-                                                        id: month_total_loss
+                                                md_bg_color: '#dedede'
+                                                MDBoxLayout:
+                                                        orientation: 'vertical'
+                                                        padding: 20
+
+                                                        MDLabel:
+                                                                text: "Total loss produced this month:"
+                                                                font_style: 'H6'
+                                                                halign: 'left'
+                                                        MDLabel:
+                                                                id: month_total_loss
+                                                                font_style: 'H4'
+                                                                bold: True
+                                                                pos_hint: {'right':1, 'bottom':1}
                                         MDCard:
-                                                MDLabel:
-                                                        text: "Average order sustainability score this month:"
-                                                MDLabel:
-                                                        id: month_avg_score
-                                MDLabel:
-                                        text: "Statistics for All-Time"
-                                        size_hint: 1, 0.05
+                                                md_bg_color: '#dedede'
+                                                MDBoxLayout:
+                                                        orientation: 'vertical'
+                                                        padding: 20
+
+                                                        MDLabel:
+                                                                text: "Average Sustainability Score this month:"
+                                                                font_style: 'H6'
+                                                                halign: 'left'
+                                                        MDLabel:
+                                                                id: month_avg_score
+                                                                text: "No Orders Yet"
+                                                                font_style: 'H4'
+                                                                bold: True
+                                                                pos_hint: {'right':1, 'bottom':1}
 
                                 MDBoxLayout:
                                         orientation: 'horizontal'
-                                        size_hint: 1, 0.45
+                                        size_hint: 1, 0.5
+                                        spacing: 20
+
                                         MDCard:
-                                                MDLabel:
-                                                        text: "All-time orders received:"
-                                                MDLabel:
-                                                        id: alltime_orders
+                                                md_bg_color: '#dedede'
+                                                MDBoxLayout:
+                                                        orientation: 'vertical'
+                                                        padding: 20
+
+                                                        MDLabel:
+                                                                text: "All-time orders received:"
+                                                                font_style: 'H6'
+                                                                halign: 'left'
+                                                        MDLabel:
+                                                                id: alltime_orders
+                                                                font_style: 'H4'
+                                                                bold: True
+                                                                pos_hint: {'right':1, 'bottom':1}
                                         MDCard:
-                                                MDLabel:
-                                                        text: "All-time orders completed:"
-                                                MDLabel:
-                                                        id: alltime_completed
+                                                md_bg_color: '#dedede'
+                                                MDBoxLayout:
+                                                        orientation: 'vertical'
+                                                        padding: 20
+
+                                                        MDLabel:
+                                                                text: "All-time orders completed:"
+                                                                font_style: 'H6'
+                                                                halign: 'left'
+                                                        MDLabel:
+                                                                id: alltime_completed
+                                                                font_style: 'H4'
+                                                                bold: True
+                                                                pos_hint: {'right':1, 'bottom':1}
                                         MDCard:
-                                                MDLabel:
-                                                        text: "Currently incomplete orders:"
-                                                        halign: 'left'
-                                                MDLabel:
-                                                        id: alltime_incomplete
-                                                        font_style: 'H5'
-                                                        bold: True
-                                                        halign: 'right'
+                                                md_bg_color: '#dedede'
+                                                MDBoxLayout:
+                                                        orientation: 'vertical'
+                                                        padding: 20
+
+                                                        MDLabel:
+                                                                text: "Pending incomplete orders:"
+                                                                font_style: 'H6'
+                                                                halign: 'left'
+                                                        MDLabel:
+                                                                id: alltime_incomplete
+                                                                font_style: 'H4'
+                                                                bold: True
+                                                                pos_hint: {'right':1, 'bottom':1}
 
 
 <EmployeeManager>: #Preferably make with classes for the little boxes

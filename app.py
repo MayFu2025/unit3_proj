@@ -80,16 +80,16 @@ class HomeScreen(MDScreen):
         super().__init__(*args, **kwargs)
         self.dialog = None
 
-    def on_pre_enter(self):
-        self.ids.month_label.text = f"Statistics for {datetime.date.today().year}/{datetime.date.today().month}"
-        self.ids.month_total_orders.text = f"""{App.db.search(query=f"select count(*) from orders where date like '{str(datetime.date.today()).replace('-', '')[:6]}%'")[
+    def on_pre_enter(self, *args):
+        month = str(datetime.date.today()).replace('-', '')[:6]
+        self.ids.month_total_orders.text = f"""{App.db.search(query=f"select count(*) from orders where date like '{month}%'")[
             0]}"""
-        self.ids.month_total_profit.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{str(datetime.date.today()).replace('-', '')[:6]}%' and amount>0")[
+        self.ids.month_total_profit.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{month}%' and amount>0")[
                                0]}"""
-        self.ids.month_total_loss.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{str(datetime.date.today()).replace('-', '')[:6]}%' and amount<=0")[
+        self.ids.month_total_loss.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{month}%' and amount<=0")[
                                    0]}"""
-        if App.db.search(f"select avg(score) from orders where date like '{str(datetime.date.today()).replace('-', '')[:6]}%'")[0] is not None:
-            self.ids.month_avg_score.text = f"""{get_letter_score(App.db.search(f"select avg(score) from orders where date like '{str(datetime.date.today()).replace('-', '')[:6]}%'")[0])}"""
+        self.ids.month_avg_score.text = f"""{App.db.search(f"select avg(score) from orders where date like '{month}%'")[0]}"""
+
 
         self.ids.alltime_orders.text = f"""{App.db.search(query=f"select count(*) from orders")[0]}"""
         self.ids.alltime_completed.text = f"""{App.db.search(query=f"select count(*) from orders where completion=TRUE")[0]}"""

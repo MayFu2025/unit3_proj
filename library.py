@@ -82,7 +82,7 @@ def try_change(screen, destination: str):
 
 
 # Function for calculating sustainability score:
-def get_letter_score(score: int)->str:
+def get_letter_score(score: float)->str:
     """Given the numeric sustainability score, returns the letter grade."""
     if 13 <= score <= 17:
         output = "A"
