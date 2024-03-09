@@ -8,7 +8,6 @@ import sqlite3
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from passlib.hash import sha256_crypt
-import re
 
 
 class DatabaseWorker:
@@ -30,7 +29,7 @@ class DatabaseWorker:
         if multiple:
             return results.fetchall()  # Fetchall returns multiple rows
         else:
-            return results.fetchone()  #[0] Fetchone returns single value
+            return results.fetchone()  # [0] Fetchone returns single value
 
     def close(self):
         self.connection.close()
@@ -48,7 +47,7 @@ def check_hash_match(text: str, hashed: str) -> bool:
     return hasher.verify(text, hashed)
 
 
-# Functions for Login
+# Functions for granting permissions
 def check_admin(current_user: list) -> bool:
     """Given the current user, returns True if the user has admin status, returns False if the user doesn't."""
     output = False
@@ -57,7 +56,7 @@ def check_admin(current_user: list) -> bool:
     return output
 
 
-# Function for showing error
+# Function for showing errors
 def show_popup(screen, messages: list, text: str):
     """Function displays a dialog that prints each message from the list messages."""
     display = "\n".join(messages)
@@ -74,21 +73,14 @@ def show_popup(screen, messages: list, text: str):
     return
 
 
-# Functions for screen change
-def try_change(screen, destination: str):
-    """Function changes the screen to right destination, based on the name of the button pressed.
-    Screen is an object of the MDScreen class"""
-    screen.parent.current = f"{destination}"
-
-
 # Function for calculating sustainability score:
-def get_letter_score(score: float)->str:
+def get_letter_score(score: float) -> str:
     """Given the numeric sustainability score, returns the letter grade."""
     if 13 <= score <= 17:
         output = "A"
-    elif 18 <= score <= 22:
+    elif 17 < score <= 22:
         output = "B"
-    elif 23 <= score <= 27:
+    elif 22 < score <= 27:
         output = "C"
     else:
         output = "D"
