@@ -30,7 +30,7 @@ class DatabaseWorker:
         if multiple:
             return results.fetchall()  # Fetchall returns multiple rows
         else:
-            return results.fetchone()  # Fetchone returns single value
+            return results.fetchone()  #[0] Fetchone returns single value
 
     def close(self):
         self.connection.close()
@@ -79,3 +79,17 @@ def try_change(screen, destination: str):
     """Function changes the screen to right destination, based on the name of the button pressed.
     Screen is an object of the MDScreen class"""
     screen.parent.current = f"{destination}"
+
+
+# Function for calculating sustainability score:
+def get_letter_score(score: int)->str:
+    """Given the numeric sustainability score, returns the letter grade."""
+    if 13 <= score <= 17:
+        output = "A"
+    elif 18 <= score <= 22:
+        output = "B"
+    elif 23 <= score <= 27:
+        output = "C"
+    else:
+        output = "D"
+    return output

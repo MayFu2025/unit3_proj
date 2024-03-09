@@ -165,7 +165,6 @@ ScreenManager:
                         MDBoxLayout:
                                 size_hint: 0.3, 1
                                 orientation: 'vertical'
-                                md_bg_color: 'gray'
                                 padding: 10
 
                                 MDLabel:
@@ -566,13 +565,19 @@ ScreenManager:
                                         valign: 'right'
                                 MDLabel:
                                         id: placeholder
-                                        size_hint: 0.4, 1
+                                        size_hint: 0.35, 1
+                                MDIconButton:
+                                        id: reset
+                                        icon: 'refresh'
+                                        on_press: root.update()
                                 MDIconButton:
                                         id: show_completed
-                                        icon: 'eye-check'
+                                        icon: 'package-variant-closed-check'
+                                        on_press: root.update("where completion = 1")
                                 MDIconButton:
                                         id: reverse_by_id
                                         icon: 'sort-descending'
+                                        on_press: root.update("where completion = 0 order by id desc")
 
                         MDScrollView:
                                 MDList:
@@ -610,43 +615,53 @@ ScreenManager:
                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
                                 padding: 20
 
-                                MDBoxLayout:
-                                        orientation: 'vertical'
-                                        size_hint: 0.5, 1
-                                        MDLabel:
-                                                id: customer_name
-                                                text: "Order ID:"
-                                                font_style: "H6"
-                                                size_hint: 1, 0.1
-                                        MDLabel:
-                                                id: customer_name
-                                                text: "Customer Name:"
-                                                font_style: "H6"
-                                                size_hint: 1, 0.1
-                                        MDLabel:
-                                                id: customer_address
-                                                text: "Customer Address:"
-                                                font_style: "H6"
-                                                size_hint: 1, 0.1
-                                        MDLabel:
-                                                id: order_description
-                                                text: "Headphone Specifications:"
-                                                font_style: "H6"
-                                                size_hint: 1, 0.1
-                                        MDLabel:
-                                                id: order_price
-                                                text: "Price:"
-                                                font_style: "H6"
-                                                size_hint: 1, 0.1
-                                        MDLabel:
-                                                id: placeholder
-                                                size_hint: 1, 0.5
+                                MDLabel:
+                                        id: order_id
+                                        text: "Order ID:"
+                                        font_style: "H6"
+                                        size_hint: 0.75, 0.1
+                                MDLabel:
+                                        id: order_date
+                                        text: "Order Date:"
+                                        font_style: "H6"
+                                        size_hint: 0.75, 0.1
+                                MDLabel:
+                                        id: customer_name
+                                        text: "Customer Name:"
+                                        font_style: "H6"
+                                        size_hint: 0.75, 0.05
+                                MDLabel:
+                                        id: customer_address
+                                        text: "Customer Address:"
+                                        font_style: "H6"
+                                        size_hint: 0.75, 0.05
+                                MDLabel:
+                                        id: order_description
+                                        text: "Headphone Specifications:"
+                                        font_style: "H6"
+                                        size_hint: 0.75, 0.05
+                                MDLabel:
+                                        id: order_price
+                                        text: "Price:"
+                                        font_style: "H6"
+                                        size_hint: 0.75, 0.05
+                                MDLabel:
+                                        id: order_score
+                                        text: "Sustainability Score:"
+                                        font_style: "H6"
+                                        size_hint: 0.75, 0.05
 
-                                        MDRectangleFlatIconButton:
-                                                text: "Box and Ship"
-                                                icon: "package-variant-closed"
-                                                size_hint: 0.5, 0.1
-                                                on_press: root.complete_order()
+                                MDScrollView:
+                                        MDList:
+                                                id: materials_needed
+                                                size_hint: 0.5, 0.55
+
+                                MDRectangleFlatIconButton:
+                                        text: "Box and Ship"
+                                        icon: "package-variant-closed"
+                                        size_hint: 0.5, 0.1
+                                        pos_hint: {'right':1, 'bottom':1}
+                                        on_press: root.complete_order()
 
                                 MDBoxLayout:
                                         orientation: 'vertical'
@@ -895,37 +910,112 @@ ScreenManager:
 
                 MDBoxLayout:
                         size_hint: 0.9, 1
-                        orientation: 'vertical'
-                        md_bg_color: 'white'
+                        orientation: 'horizontal'
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
                         padding: 50
 
-                        MDLabel:
-                                text: "This is Finance"
-                                halign: "center"
-                                font_style: "H3"
-                                pos_hint: {"center_x": .5, "center_y": .5}
-                                size_hint: 1, 0.3
+                        MDBoxLayout:
+                                size_hint: 0.7, 1
+                                orientation: 'vertical'
 
-                        MDLabel:
-                                id: current_balance
-                                text: "Current Balance: $0"
-                                font_style: "H6"
-                                size_hint: 1, 0.1
-                        MDLabel:
-                                id: total_profit
-                                text: "Total Profit: $0"
-                                font_style: "H6"
-                                size_hint: 1, 0.1
-                        MDLabel:
-                                id: total_loss
-                                text: "Total Loss: $0"
-                                font_style: "H6"
-                                size_hint: 1, 0.1
-                        MDLabel:
-                                id: profitloss_ratio
-                                text: "Profit-to-Loss Ratio: "
-                                font_style: "H6"
-                                size_hint: 1, 0.1
+                                MDLabel:
+                                        text: "Finance Manager"
+                                        padding: 20
+                                        halign: "left"
+                                        font_style: "H3"
+                                        size_hint: 1, 0.1
+
+                                MDLabel:
+                                        id: placeholder
+                                        size_hint: 1, 0.9
+
+                        MDBoxLayout:
+                                size_hint: 0.3, 1
+                                orientation: 'vertical'
+                                padding: 20
+
+                                MDLabel:
+                                        id: placeholder
+                                        size_hint: 1, 0.15
+
+                                MDLabel:
+                                        id: current_total
+                                        size_hint: (1, 0.1)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: 'Current Total: $0'
+                                        font_style: "H6"
+
+                                MDLabel:
+                                        id: total_profit
+                                        size_hint: (1, 0.1)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: 'Total Profit: $0'
+                                        font_style: "H6"
+
+                                MDLabel:
+                                        id: total_loss
+                                        size_hint: (1, 0.1)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: 'Total Loss: $0'
+                                        font_style: "H6"
+
+                                MDLabel:
+                                        id: placeholder
+                                        size_hint: 1, 0.05
+
+                                MDLabel:
+                                        size_hint: (1, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: 'Sort List:'
+                                        font_style: "H6"
+
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "by Date"
+                                        on_press: root.update("date desc")
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "by Amount"
+                                        on_press: root.update("amount desc")
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "by ID"
+                                        on_press: root.update()
+
+                                MDLabel:
+                                        size_hint: (1, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: 'Filter List:'
+                                        font_style: "H6"
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "Only Profits"
+                                        on_press: root.filter("amount>0")
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "Only Losses"
+                                        on_press: root.filter("amount<=0")
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "This Month"
+                                        on_press: root.filter("month")
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "This Year"
+                                        on_press: root.filter("year")
+                                MDRaisedButton:
+                                        size_hint: (0.9, 0.05)
+                                        pos_hint: {'center_x':0.5, 'center_y':0.5}
+                                        text: "Reset"
+                                        on_press: root.update()
+
 
 <BackButton>:
         icon: "arrow-left"

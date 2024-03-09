@@ -16,7 +16,7 @@ from kivymd.icon_definitions import md_icons
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.textfield import MDTextField
 import datetime
-from library import DatabaseWorker, make_hash, check_hash_match, show_popup, check_admin
+from library import DatabaseWorker, make_hash, check_hash_match, show_popup, check_admin, get_letter_score
 
 
 class App(MDApp):
@@ -216,8 +216,8 @@ class InventoryManager(MDScreen):
         if current_total < PurchaseDialog.cost:  # if not sufficient money
             errors.append("Not enough money!")
         else:
-            query = f"""insert into ledger (date, buy, sell, amount, total)
-                        values ({str(datetime.date.today())}, 1, 0, {PurchaseDialog.cost}, {current_total - PurchaseDialog.cost})"""
+            query = f"""insert into ledger (date, amount, total)
+                        values ({str(datetime.date.today())}, {-PurchaseDialog.cost}, {current_total - PurchaseDialog.cost})"""
             App.db.run_query(query=query)
             query = f"""update resources set amount=((select amount from resources where resources.name='{InventoryManager.current_material}')+{PurchaseDialog.amount})
                         where name='{InventoryManager.current_material}'"""
@@ -254,15 +254,28 @@ class OrderManager(MDScreen):
         self.orders_data = None
 
     def on_enter(self):
-        self.orders_data = App.db.search(query="select * from orders where completion=FALSE", multiple=True)
+        self.update()
+
+    def on_leave(self, *args):
+        self.ids.orders_container.clear_widgets()
+
+    def update(self, condition=None):
+        self.ids.orders_container.clear_widgets()
+
+        if condition is not None:
+            query = "select * from orders " + condition
+            self.orders_data = App.db.search(query=query, multiple=True)
+        else:
+            self.orders_data = App.db.search(query="select * from orders", multiple=True)
+
         for order in self.orders_data:
             self.ids.orders_container.add_widget(
                 MDRectangleFlatIconButton(
                     text=f"Order #{order[0]}",
                     icon=f"{self.choose_icon(order_id=order[0])}",
                     icon_size=50,
-                    size_hint=(1,0.5),
-                    on_press= lambda x: self.view_details(order[0])
+                    size_hint=(1, 0.5),
+                    on_press=lambda x: self.view_details(order[0])
                 )
             )
 
@@ -270,35 +283,34 @@ class OrderManager(MDScreen):
         if App.db.search(query=f"select completion from orders where id={order_id}")[0] == 0:
             return "package-variant"
         else:
-            return "package-variant-closed"
-
-    def on_leave(self, *args):
-        self.ids.orders_container.clear_widgets()
+            return "package-variant-closed-check"
 
     def view_details(self, order_id: int):
         OrderManager.viewed_order = order_id
         self.parent.current = "OrderDetails"
 
-    def update(self): #TODO: update by filter
-        # searched = self.ids.searchbar.text
-        # query = f'''select * from orders
-        #             where (id like '%{searched}%') or (date like '%{searched}%') or
-        #             (customers.first_name like '%{searched}%') or (customers.last_name like '%{searched}%')
-        #             inner join customers on orders.customer_id=customers.id)'''
-        result = App.db.search(query=query, multiple=True)
-        pass
 
-
-class OrderDetails(MDScreen): #TODO:
+class OrderDetails(MDScreen):  # TODO:
     materials_count = None
-    material_name = None
-    material_amount = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.order_details = None
         self.needed_materials = None
 
-    def on_enter(self): #Todo: need to show order info
+    def on_enter(self):  # Todo: need to show order info
+        # Gain order information
+        query = f"select * from orders where id={OrderManager.viewed_order}"
+        self.order_details = App.db.search(query=query, multiple=False)
+        self.ids.order_id.text = f"Order ID: #{self.order_details[0]}"
+        self.ids.order_date.text = f"Order Date: {self.order_details[1]}"
+        self.ids.customer_name.text = f"Customer Name: {App.db.search(query=f'select first_name, last_name from customers where id={self.order_details[2]}').join(' ')}"
+        self.ids.customer_address.text = f"Customer Address: {App.db.search(query=f'select address from customers where id={self.order_details[2]}')[0]}"
+        self.ids.order_description.text = f"Order Description: {self.order_details[6]}"
+        self.ids.order_price.text = f"Price: ${self.order_details[3]}"
+        self.ids.order_score.text = f"Sustainability Score: {get_letter_score(self.order_details[4])}"
+
+        # Gain materials count
         query = f"""select resources.name, OrdersResources.amount from OrdersResources
         inner join resources on resources.id = OrdersResources.resource_id
         where OrdersResources.order_id = {OrderManager.viewed_order}
@@ -307,14 +319,15 @@ class OrderDetails(MDScreen): #TODO:
         print(self.needed_materials)
 
         for material in self.needed_materials:
-            OrderDetails.material_name = material[0]
-            print(OrderDetails.material_name)
-            OrderDetails.material_amount = material[1]
-            print(OrderDetails.material_amount)
-            self.ids.materials_container.add_widget(MaterialShowcase())
+            self.ids.materials_needed.add_widget(TwoLineListItem(
+                text=f"{material[0]}",
+                secondary_text=f"Amount: {material[1]}"
+            )
+            )
 
-    def complete_order(self): #TODO: box and ship
+    def complete_order(self):  # TODO: box and ship
         pass
+
 
 class MaterialShowcase(MDBoxLayout):
     def __init__(self, **kwargs):
@@ -323,11 +336,13 @@ class MaterialShowcase(MDBoxLayout):
         self.ids.materialname.text = OrderDetails.material_name
         self.ids.materialamount.text = str(OrderDetails.material_amount)
 
-    def on_checkbox_active(self, checkbox, value): #TODO: check enough resources, if not, deactivte checkbox automatically
-        if value: #enough of that material
+    def on_checkbox_active(self, checkbox,
+                           value):  # TODO: check enough resources, if not, deactivte checkbox automatically
+        if value:  # enough of that material
             print('The checkbox', checkbox, 'is active', 'and', checkbox.state, 'state')
         else:
             print('The checkbox', checkbox, 'is inactive', 'and', checkbox.state, 'state')
+
 
 class NewOrder(MDScreen):
     def __init__(self, **kwargs):
@@ -372,7 +387,7 @@ class NewOrder(MDScreen):
         self.update()
 
     def update(self):
-        # disable buttons TODO: can probably use a loop lol
+        # disable buttons
         check = {"base": ["aluminium", "carbon", "wood"], "padding": ["silicone", "foam", "leather"],
                  "speaker": ["standard", "gaming", "bassboosted", "audiophile"]}
         for n in range(3):
@@ -394,6 +409,7 @@ class NewOrder(MDScreen):
         score = 0
         for material in self.order:
             score += App.db.search(query=f"select score from resources where name='{material}'")[0]
+
         self.score = score
 
         # calculate price
@@ -405,10 +421,10 @@ class NewOrder(MDScreen):
         self.price = price
 
         # update the text
-        self.ids.specifications.text = f"""Base: {self.options[0]}\nPadding: {self.options[1]}\nSpeakers: {self.options[2]}\nOptions: {', '.join(self.options[3:])}\nSustainability Score: {self.score}"""
+        self.ids.specifications.text = f"""Base: {self.options[0]}\nPadding: {self.options[1]}\nSpeakers: {self.options[2]}\nOptions: {', '.join(self.options[3:])}\nSustainability Score: {get_letter_score(self.score)}"""
         self.ids.price.text = f"Total Price: ${self.price}"
 
-    def place_order(self):  # TODO where am I taking into account the options that got selected?
+    def place_order(self):
         errors = []
         # Check for required information
         if len(self.order) < 10:  # 10 units of material is the minimum an order can have
@@ -426,7 +442,8 @@ class NewOrder(MDScreen):
         if len(errors) == 0:
             # Add customer if new
             if existing_address is None:
-                App.db.run_query(query=f"insert into customers(first_name, last_name, address) values('{self.ids.customer_firstname.text}', '{self.ids.customer_lastname.text}', '{self.ids.customer_address.text}')")
+                App.db.run_query(
+                    query=f"insert into customers(first_name, last_name, address) values('{self.ids.customer_firstname.text}', '{self.ids.customer_lastname.text}', '{self.ids.customer_address.text}')")
 
             # Place new order
             print(self.options[0])
@@ -435,12 +452,11 @@ class NewOrder(MDScreen):
             if self.options[3:]:
                 order_description += f" Added options for {', '.join(self.options[3:])}."
 
-            query = f"""insert into orders(date, customer_id, cost, score, creation, completion, description)
+            query = f"""insert into orders(date, customer_id, cost, score, completion, description)
                         values({str(datetime.date.today()).replace('-', '')},
                                 (select id from customers where first_name='{self.ids.customer_firstname.text}' and last_name='{self.ids.customer_lastname.text}'),
                                 {self.price},
                                 {self.score},
-                                false,
                                 false,
                                 '{order_description}')"""
             App.db.run_query(query=query)
@@ -464,34 +480,47 @@ class FinanceManager(MDScreen):
         self.selected_rows = []  # List to keep track which rows were selected
         self.dialog = None
 
-    def on_pre_enter(self):
-        self.ids.current_balance.text = f"{App.db.search(query='select total from ledger where id=(select max(id) from ledger)')[0]}"
-        self.ids.total_profit.text = f"{App.db.search(query='select sum(sell) from ledger')[0]}"
-        self.ids.total_loss.text = f"{App.db.search(query='select sum(buy) from ledger')[0]}"
-        self.ids.profitloss_ratio.text = f"{App.db.search(query='select sum(sell) from ledger')[0] / App.db.search(query='select sum(buy) from ledger')[0]}"
-
-    # Making a Table
     def on_pre_enter(self, *args):  # '*args' means it doesn't know what the arguments will be
-        columns_names = [('id', 50), ('First Name', 85), ('Last Name', 85), ('Admin Status', 50)]
+        if App.db.search(query="select count(*) from ledger")[0] != 0:
+            self.ids.current_total.text = f"Current Balance: ${App.db.search(query='select total from ledger where id=(select max(id) from ledger)')[0]}"
+        if App.db.search(query="select count(*) from ledger where amount>0")[0] != 0:
+            self.ids.total_profit.text = f"Total profit: ${App.db.search(query='select sum(amount) from ledger where amount>0')[0]}"
+        if App.db.search(query="select count(*) from ledger where amount<=0")[0] != 0:
+            self.ids.total_loss.text = f"Total loss: ${App.db.search(query='select sum(amount) from ledger where amount<=0')[0]}"
+
+        # Making a Table
+        columns_names = [('id', 50), ('Date', 125), ('Amount', 125)]
         self.ledger_table = MDDataTable(
-            size_hint=(0.6, 0.8),
-            pos_hint={'center_x': 0.41, 'center_y': 0.45},
+            size_hint=(0.58, 0.8),
+            pos_hint={'center_x': 0.42, 'center_y': 0.45},
             use_pagination=False,
-            check=True,
+            check=False,
             column_data=columns_names
         )
-        self.employee_table.bind(on_check_press=self.checkbox_pressed)  # bind a function to function
-        self.add_widget(self.employee_table)
+        self.add_widget(self.ledger_table)
         self.update()
 
     def update(self, sort=None):
-        query = 'Select id, first_name, last_name, is_admin from users'
+        query = 'Select id, date, amount from ledger'
+
         if sort is not None:
             query += f' order by {sort.strip("")}'
         print(query)
         data = App.db.search(query=query, multiple=True)
-        self.employee_table.update_row_data(None, data)
+        self.ledger_table.update_row_data(None, data)
 
+    def filter(self, filter=None):
+        query = 'Select id, date, amount from ledger'
+        if filter is not None:
+            if filter == "month":
+                query += f" where date like '%-_{datetime.date.today().month}-%'"
+            elif filter == "year":
+                query += f" where date like '%{datetime.date.today().year}-%'"
+            else:
+                query += f' where {filter.strip("")}'
+        print(query)
+        data = App.db.search(query=query, multiple=True)
+        self.ledger_table.update_row_data(None, data)
 
 
 a = App()
