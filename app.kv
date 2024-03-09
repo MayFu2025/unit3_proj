@@ -610,21 +610,22 @@ ScreenManager:
                                 size_hint: 1, 0.1
 
                         MDBoxLayout:
-                                orientation: 'horizontal'
+                                orientation: 'vertical'
                                 size_hint: 1, 0.9
                                 pos_hint: {'center_x':0.5, 'center_y':0.5}
                                 padding: 20
+                                spacing: 15
 
                                 MDLabel:
                                         id: order_id
                                         text: "Order ID:"
                                         font_style: "H6"
-                                        size_hint: 0.75, 0.1
+                                        size_hint: 0.75, 0.05
                                 MDLabel:
                                         id: order_date
                                         text: "Order Date:"
                                         font_style: "H6"
-                                        size_hint: 0.75, 0.1
+                                        size_hint: 0.75, 0.05
                                 MDLabel:
                                         id: customer_name
                                         text: "Customer Name:"
@@ -639,7 +640,7 @@ ScreenManager:
                                         id: order_description
                                         text: "Headphone Specifications:"
                                         font_style: "H6"
-                                        size_hint: 0.75, 0.05
+                                        size_hint: 0.75, 0.1
                                 MDLabel:
                                         id: order_price
                                         text: "Price:"
@@ -651,36 +652,28 @@ ScreenManager:
                                         font_style: "H6"
                                         size_hint: 0.75, 0.05
 
-                                MDScrollView:
-                                        MDList:
-                                                id: materials_needed
-                                                size_hint: 0.5, 0.55
-
-                                MDRectangleFlatIconButton:
-                                        text: "Box and Ship"
-                                        icon: "package-variant-closed"
-                                        size_hint: 0.5, 0.1
-                                        pos_hint: {'right':1, 'bottom':1}
-                                        on_press: root.complete_order()
-
                                 MDBoxLayout:
-                                        orientation: 'vertical'
-                                        size_hint: 0.5, 1
+                                        size_hint: 1, 0.6
                                         spacing: 20
-                                        md_bg_color: 'gray'
 
-                                        MDLabel:
-                                                text: "Materials:"
-                                                font_style: "H6"
-                                                size_hint: 1, 0.1
-                                                padding: 20
+                                        MDScrollView:
+                                                do_scroll_x: False
+                                                do_scroll_y: True
+                                                MDList:
+                                                        id: materials_needed
+                                                        size_hint: 0.6, 1
 
-                                        MDBoxLayout:
-                                                id: materials_container
-                                                orientation: 'vertical'
-                                                size_hint: 1, 0.9
-                                                padding: 20
-                                                md_bg_color: 'gray'
+                                        MDRectangleFlatIconButton:
+                                                text: "Cancel Order"
+                                                icon: "package-variant-closed"
+                                                size_hint: 0.2, 0.2
+                                                on_press: root.cancel_order()
+
+                                        MDRectangleFlatIconButton:
+                                                text: "Box and Ship"
+                                                icon: "package-variant-closed-remove"
+                                                size_hint: 0.2, 0.2
+                                                on_press: root.complete_order()
 
 <MaterialShowcase>:
         id: materialshowcase
