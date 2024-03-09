@@ -19,41 +19,55 @@ ScreenManager:
                 name: "Finance"
 
 <StartupScreen>:
-        MDBoxLayout:
-                orientation: 'vertical'
-                size_hint: 1, 1
+        MDRelativeLayout:
+                FitImage:
+                        source: "assets/bg.png"
+                        size_hint: 1, 1
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
-                MDLabel:
-                        text: "Welcome back!"
-                        halign: "center"
-                        pos_hint: {"center_x": .5, "center_y": .5}
+                MDCard:
+                        size_hint: 0.4, 0.9
+                        pos_hint: {'center_x':0.25, 'center_y': 0.5}
+                        md_bg_color: 1, 1, 1, 0.7
 
-                MDTextField:
-                        id: firstname
-                        hint_text: 'Enter first name'
-                        icon_left: 'account'
-                        size_hint_x: 0.7
-                        pos_hint: {"center_x": .5, "center_y": .5}
+                        MDBoxLayout:
+                                orientation: 'vertical'
+                                size_hint: 1, 1
+                                spacing: 20
+                                padding: 50
 
-                MDTextField:
-                        id: lastname
-                        hint_text: 'Enter last name'
-                        icon_left: 'account'
-                        size_hint_x: 0.7
-                        pos_hint: {"center_x": .5, "center_y": .5}
+                                MDLabel:
+                                        text: "Employee Login"
+                                        font_style: "H3"
+                                        halign: "center"
+                                        pos_hint: {"center_x": .5, "center_y": .5}
 
-                MDTextField:
-                        id: pword
-                        hint_text: 'Enter password'
-                        icon_left: 'key'
-                        size_hint_x: 0.7
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        password: True
+                                MDTextField:
+                                        id: firstname
+                                        hint_text: 'Enter first name'
+                                        icon_left: 'numeric-1-circle-outline'
+                                        size_hint_x: 0.8
+                                        pos_hint: {"center_x": .5, "center_y": .5}
 
-                MDRaisedButton:
-                        text: "Login"
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        on_press: root.try_login()
+                                MDTextField:
+                                        id: lastname
+                                        hint_text: 'Enter last name'
+                                        icon_left: 'numeric-2-circle-outline'
+                                        size_hint_x: 0.8
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                                MDTextField:
+                                        id: pword
+                                        hint_text: 'Enter password'
+                                        icon_left: 'key'
+                                        size_hint_x: 0.8
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+                                        password: True
+
+                                MDRaisedButton:
+                                        text: "Login"
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+                                        on_press: root.try_login()
 
 <Navigation>:
         type: "labeled"
@@ -107,34 +121,83 @@ ScreenManager:
                         size_hint: 0.9, 1
                         orientation: 'vertical'
                         md_bg_color: 'white'
-                        padding: 50
 
-                        MDBanner: #LMAO HOW DO I SHOW THIS BANNER, BUT WANT TO MAKE IT SO THIS BANNER ONLY SHOWS WHEN THERE'S NEW INFO/UNDONE TASKS
-                                id: alert_banner
-                                type: "two-line-icon"
-                                icon: "alert-circle"
-                                text: ["Updates", "THIS IS WHERE ALL THE UPDATES SINCE LAST LOGIN SHOULD GO, SO BASICALLY WE NEED A DONE OR NOT DONE FLAG FOR THE THINGS IN DATABASE"]
-                                left_action: ["OK", lambda x: None]
-
-                        MDLabel:
-                                text: "This is Producer Home"
-                                halign: "center"
-                                font_style: "H3"
-                                pos_hint: {"center_x": .5, "center_y": .5}
-                                size_hint: 1, 0.3
+                        FitImage:
+                                source: "assets/banner.png"
+                                size_hint: 1, 0.25
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
                         MDBoxLayout:
-                                size_hint: 1, 0.7
-                                orientation: 'horizontal'
-                                md_bg_color: 'white'
-                                padding: 50
+                                orientation: 'vertical'
+                                size_hint: 1, 0.75
+                                padding: 20
+                                spacing: 20
 
                                 MDLabel:
-                                        text: "This is where the producer's home screen will be"
-                                        halign: "center"
-                                        font_style: "H6"
-                                        pos_hint: {"center_x": .5, "center_y": .5}
-                                        size_hint: 1, 0.3
+                                        id: month_label
+                                        size_hint: 1, 0.05
+
+                                MDBoxLayout:
+                                        orientation: 'horizontal'
+                                        size_hint: 1, 0.45
+
+                                        MDCard:
+                                                md_bg_color: 'gray'
+                                                MDBoxLayout:
+                                                        orientation: 'vertical'
+                                                        padding: 20
+
+                                                        MDLabel:
+                                                                text: "Total orders placed this month:"
+                                                                font_style: 'H6'
+                                                                halign: 'left'
+                                                        MDLabel:
+                                                                id: month_total_orders
+                                                                font_style: 'H5'
+                                                                bold: True
+                                                                halign: 'right'
+                                        MDCard:
+                                                MDLabel:
+                                                        text: "Total profit gained this month:"
+                                                MDLabel:
+                                                        id: month_total_profit
+                                        MDCard:
+                                                MDLabel:
+                                                        text: "Total loss produced this month:"
+                                                MDLabel:
+                                                        id: month_total_loss
+                                        MDCard:
+                                                MDLabel:
+                                                        text: "Average order sustainability score this month:"
+                                                MDLabel:
+                                                        id: month_avg_score
+                                MDLabel:
+                                        text: "Statistics for All-Time"
+                                        size_hint: 1, 0.05
+
+                                MDBoxLayout:
+                                        orientation: 'horizontal'
+                                        size_hint: 1, 0.45
+                                        MDCard:
+                                                MDLabel:
+                                                        text: "All-time orders received:"
+                                                MDLabel:
+                                                        id: alltime_orders
+                                        MDCard:
+                                                MDLabel:
+                                                        text: "All-time orders completed:"
+                                                MDLabel:
+                                                        id: alltime_completed
+                                        MDCard:
+                                                MDLabel:
+                                                        text: "Currently incomplete orders:"
+                                                        halign: 'left'
+                                                MDLabel:
+                                                        id: alltime_incomplete
+                                                        font_style: 'H5'
+                                                        bold: True
+                                                        halign: 'right'
+
 
 <EmployeeManager>: #Preferably make with classes for the little boxes
         BoxLayout:
