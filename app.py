@@ -1,20 +1,12 @@
-from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager
-from kivy.uix.widget import Widget
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.card import MDCard
 from kivymd.uix.datatables import MDDataTable
-from kivymd.uix.label import MDLabel
-from kivymd.uix.list import TwoLineRightIconListItem, TwoLineIconListItem, IconRightWidget, TwoLineListItem
+from kivymd.uix.list import TwoLineListItem
 from kivymd.uix.navigationrail import MDNavigationRail
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.button import MDFlatButton, MDRectangleFlatIconButton, MDIconButton
 from kivymd.uix.dialog import MDDialog
-from kivymd.icon_definitions import md_icons
-from kivymd.uix.scrollview import MDScrollView
-from kivymd.uix.textfield import MDTextField
 import datetime
 from library import DatabaseWorker, make_hash, check_hash_match, show_popup, check_admin, get_letter_score
 
@@ -26,6 +18,9 @@ class App(MDApp):
     def build(self):
         Window.size = 1200, 1000
         return
+
+    def on_stop(self):
+        App.db.close()
 
 
 class StartupScreen(MDScreen):
@@ -39,7 +34,6 @@ class StartupScreen(MDScreen):
         self.ids.pword.text = ""
 
     def try_login(self):
-        print(make_hash("test"))
         errors = []
         firstname = self.ids.firstname.text
         lastname = self.ids.lastname.text
@@ -48,7 +42,6 @@ class StartupScreen(MDScreen):
         # Check if employee exists
         result = App.db.search(
             f"SELECT password, is_admin FROM users WHERE first_name = '{firstname}' and last_name='{lastname}'")
-        print(result)
         if result is None:
             errors.append("Employee does not exist.")
         else:
@@ -63,9 +56,6 @@ class StartupScreen(MDScreen):
 
 
 class Navigation(MDNavigationRail):
-    def try_change(self, destination: str):
-        print(self.parent.ids)
-
     def logout(self):
         App.current_user = []
         self.parent.parent.parent.current = "Startup"
@@ -78,21 +68,17 @@ class BackButton(MDRectangleFlatIconButton):
 class HomeScreen(MDScreen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.dialog = None
 
     def on_pre_enter(self):
         month = str(datetime.date.today()).replace('-', '')[:6]
         self.ids.month_total_orders.text = f"""{App.db.search(query=f"select count(*) from orders where date like '{month}%'")[0]}"""
         self.ids.month_total_profit.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{month}%' and amount>0")[0]}"""
         self.ids.month_total_loss.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{month}%' and amount<=0")[0]}"""
-        self.ids.month_avg_score.text = f"""{App.db.search(f"select avg(score) from orders where date like '{month}%'")[0]}"""
-
+        self.ids.month_avg_score.text = f"""{get_letter_score(App.db.search(f"select avg(score) from orders where date like '{month}%'")[0])}"""
 
         self.ids.alltime_orders.text = f"""{App.db.search(query=f"select count(*) from orders")[0]}"""
         self.ids.alltime_completed.text = f"""{App.db.search(query=f"select count(*) from orders where completion=TRUE")[0]}"""
         self.ids.alltime_incomplete.text = f"""{App.db.search(query=f"select count(*) from orders where completion=FALSE")[0]}"""
-
-
 
 
 class EmployeeManager(MDScreen):
@@ -109,7 +95,7 @@ class EmployeeManager(MDScreen):
         self.ids.new_password.text = ""
 
     # Making a Table
-    def on_pre_enter(self, *args):  # '*args' means it doesn't know what the arguments will be
+    def on_pre_enter(self):
         columns_names = [('id', 50), ('First Name', 85), ('Last Name', 85), ('Admin Status', 50)]
         self.employee_table = MDDataTable(
             size_hint=(0.6, 0.8),
@@ -119,7 +105,7 @@ class EmployeeManager(MDScreen):
             check=True,
             column_data=columns_names
         )
-        self.employee_table.bind(on_check_press=self.checkbox_pressed)  # bind a function to function
+        self.employee_table.bind(on_check_press=self.checkbox_pressed)
         self.add_widget(self.employee_table)
         self.update()
 
@@ -127,7 +113,6 @@ class EmployeeManager(MDScreen):
         query = 'Select id, first_name, last_name, is_admin from users'
         if sort is not None:
             query += f' order by {sort.strip("")}'
-        print(query)
         data = App.db.search(query=query, multiple=True)
         self.employee_table.update_row_data(None, data)
 
@@ -136,12 +121,10 @@ class EmployeeManager(MDScreen):
         self.remove_widget(self.employee_table)
 
     def checkbox_pressed(self, table, current_row):
-        print(f"Record checked: {current_row}")
         if current_row[0] not in self.selected_rows:
             self.selected_rows.append(current_row[0])
         else:
             self.selected_rows.remove(current_row[0])
-        print(self.selected_rows)
 
     def admin_status_checkbox(self, checkbox, value):
         self.new_admin = False
@@ -164,7 +147,6 @@ class EmployeeManager(MDScreen):
             if result is not None:
                 errors.append("User with same name already exists.")
             else:
-                print(firstname, lastname, password, admin)
                 App.db.run_query(
                     query=f'insert into users(first_name, last_name, password, is_admin) values("{firstname}", "{lastname}", "{make_hash(password)}", {admin})')
                 errors.append("User created successfully.")
@@ -210,7 +192,6 @@ class InventoryManager(MDScreen):
 
     def purchase_popup(self, material):
         InventoryManager.current_material = material
-        print(self)
         self.dialog = MDDialog(
             title=f"Purchase {material}?",
             type="custom",
@@ -231,20 +212,22 @@ class InventoryManager(MDScreen):
     def purchase(self):
         # Purchase (take away money and add materials)
         errors = []
-        current_total = App.db.search(query="SELECT total FROM ledger WHERE id=(SELECT max(id) FROM ledger)")[0]
-        print(current_total)
-        if current_total < PurchaseDialog.cost:  # if not sufficient money
-            errors.append("Not enough money!")
+        if not check_admin(App.current_user):
+            errors.append("You do not have these permissions.")
         else:
-            query = f"""insert into ledger (date, amount, total)
-                        values ({str(datetime.date.today()).replace('-', '')}, {-PurchaseDialog.cost}, {current_total - PurchaseDialog.cost})"""
-            App.db.run_query(query=query)
-            query = f"""update resources set amount=((select amount from resources where resources.name='{InventoryManager.current_material}')+{PurchaseDialog.amount})
-                        where name='{InventoryManager.current_material}'"""
-            App.db.run_query(query=query)
-            errors.append("Purchase successful!")
-        self.dialog.dismiss()
-        show_popup(self, messages=errors, text="OK")
+            current_total = App.db.search(query="SELECT total FROM ledger WHERE id=(SELECT max(id) FROM ledger)")[0]
+            if current_total < PurchaseDialog.cost:  # if not sufficient money
+                errors.append("Not enough money!")
+            else:
+                query = f"""insert into ledger (date, amount, total)
+                            values ({str(datetime.date.today()).replace('-', '')}, {-PurchaseDialog.cost}, {current_total - PurchaseDialog.cost})"""
+                App.db.run_query(query=query)
+                query = f"""update resources set amount=((select amount from resources where resources.name='{InventoryManager.current_material}')+{PurchaseDialog.amount})
+                            where name='{InventoryManager.current_material}'"""
+                App.db.run_query(query=query)
+                errors.append("Purchase successful!")
+            self.dialog.dismiss()
+            show_popup(self, messages=errors, text="OK")
 
 
 class PurchaseDialog(MDBoxLayout):
@@ -276,7 +259,7 @@ class OrderManager(MDScreen):
     def on_enter(self):
         self.update()
 
-    def on_leave(self, *args):
+    def on_leave(self):
         self.ids.orders_container.clear_widgets()
 
     def update(self, condition=None):
@@ -310,15 +293,13 @@ class OrderManager(MDScreen):
         self.parent.current = "OrderDetails"
 
 
-class OrderDetails(MDScreen):  # TODO:
-    materials_count = None
-
+class OrderDetails(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.order_details = None
         self.needed_materials = None
 
-    def on_enter(self):  # Todo: need to show order info
+    def on_enter(self):
         # Gain order information
         query = f"select * from orders where id={OrderManager.viewed_order}"
         self.order_details = App.db.search(query=query, multiple=False)
@@ -344,6 +325,7 @@ class OrderDetails(MDScreen):  # TODO:
             )
 
     def cancel_order(self):
+        # Delete from orders table, and delete resources for order_id from OrdersResources table
         App.db.run_query(query=f"delete from orders where id={OrderManager.viewed_order}")
         App.db.run_query(query=f"delete from OrdersResources where order_id={OrderManager.viewed_order}")
         show_popup(self, messages=["Order cancelled."], text="OK")
@@ -402,8 +384,6 @@ class NewOrder(MDScreen):
                     self.order.append(k)
         else:
             self.options.append(material)  # Optional was selected
-        print(self.order)
-        print(self.options)
         self.update()
 
     def clear_order(self):
@@ -473,7 +453,6 @@ class NewOrder(MDScreen):
                     query=f"insert into customers(first_name, last_name, address) values('{self.ids.customer_firstname.text}', '{self.ids.customer_lastname.text}', '{self.ids.customer_address.text}')")
 
             # Place new order
-            print(self.options[0])
             order_description = f"A {self.options[0]} base with {self.options[1]} padding and {self.options[2]} speakers."
             if self.options[3:]:
                 order_description += f" Added options for {', '.join(self.options[3:])}."
@@ -542,16 +521,15 @@ class FinanceManager(MDScreen):
         data = App.db.search(query=query, multiple=True)
         self.ledger_table.update_row_data(None, data)
 
-    def filter(self, filter=None):  # TODO: month filter probably doesn't work
-        query = 'Select id, date, amount from ledger'
+    def filter(self, filter=None):
+        query = 'Select id, date, amount from ledger' # Default
         if filter is not None:
             if filter == "month":
-                query += f""" where date like '{str(datetime.date.today()).replace("-", "")[:6]}%'"""
+                query += f""" where date like '{str(datetime.date.today()).replace("-", "")[:6]}%'""" # Obtain YYYYMM
             elif filter == "year":
                 query += f" where date like '{datetime.date.today().year}%'"
             else:
                 query += f' where {filter.strip("")}'
-        print(query)
         data = App.db.search(query=query, multiple=True)
         self.ledger_table.update_row_data(None, data)
 
