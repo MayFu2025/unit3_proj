@@ -80,14 +80,11 @@ class HomeScreen(MDScreen):
         super().__init__(*args, **kwargs)
         self.dialog = None
 
-    def on_pre_enter(self, *args):
+    def on_pre_enter(self):
         month = str(datetime.date.today()).replace('-', '')[:6]
-        self.ids.month_total_orders.text = f"""{App.db.search(query=f"select count(*) from orders where date like '{month}%'")[
-            0]}"""
-        self.ids.month_total_profit.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{month}%' and amount>0")[
-                               0]}"""
-        self.ids.month_total_loss.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{month}%' and amount<=0")[
-                                   0]}"""
+        self.ids.month_total_orders.text = f"""{App.db.search(query=f"select count(*) from orders where date like '{month}%'")[0]}"""
+        self.ids.month_total_profit.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{month}%' and amount>0")[0]}"""
+        self.ids.month_total_loss.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{month}%' and amount<=0")[0]}"""
         self.ids.month_avg_score.text = f"""{App.db.search(f"select avg(score) from orders where date like '{month}%'")[0]}"""
 
 
