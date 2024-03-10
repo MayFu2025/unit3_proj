@@ -1,7 +1,7 @@
 # Unit 3: Comapany Manager Application
 
-![](headerimage.png)  
-<sub>"THE HEADER" by SOMEONE, *linkhere*</sub>
+![](assets/frog_vibing.gif)  
+<sub>"Frog VIbing GIF" by LINE FRIENDS, *https://giphy.com/gifs/LINEFRIENDS-frog-leonard-linefriends-6FxJBpNTBgWdJCXKD4*</sub>
 
 ## Criteria A: Planning
 ### Problem Definition
