@@ -53,20 +53,24 @@ Using python and KivyMD I will create a GUI application for HNE in which a user 
 <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="450" src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2Futc6ePhsfo0sHDL2E9SGdy%2FUnit-3-Wireframe%3Ftype%3Ddesign%26node-id%3D37%253A805%26mode%3Ddesign%26t%3DeRKIabr4ogkip19t-1" allowfullscreen></iframe>
 **Fig.4** *Wireframe of the application design, created on Figma using components from Wireframes Kit [Free] by Nailul Izah (https://www.figma.com/community/file/1122167340874425914)*
 
+### Flowchart of Customer Ordering Process
+![](assets/ordering_headphone.png)
+**Fig.5** *Flowchart describing the ordering process of the sold product*
+
 ### UML Diagram
 ![](assets/uml_diagram.png)
-**Fig.5** *UML diagram of proposed solution*
+**Fig.6** *UML diagram of proposed solution*
 
 ### ER Diagram
 ![](assets/er_diagram.png)
-**Fig.6** *ER diagram of database*
+**Fig.7** *ER diagram of database*
 
 ### Flow Diagrams
 ![](placeholder.png)
-**Fig.7** *Flow diagram of*
+**Fig.8** *Flow diagram of*
 
 ![](placeholder.png)
-**Fig.8** *Flow diagram of*
+**Fig.9** *Flow diagram of*
 
 ![](placeholder.png)
 **Fig.9** *Flow diagram of*
@@ -912,3 +916,6 @@ The `view_details` method is used to change the screen to the `OrderDetails` scr
 No matter which order is selected, the `viewed_order` attribute is updated to the id of the order that was selected. Hence, the `OrderDetails` screen, which uses the `viewed_order` variable to generate its information, is able to correctly display the details of the order that was selected by the user.
 
 ## Criteria D: Functionality
+### Video of proposed solution
+The video can be found under the name "Project 3- CompanyApp.mp4" in this Google Drive Folder: 
+https://drive.google.com/drive/folders/1tMNTtgjcs2QFEaba9YF4Wc9Ikm9p6jiU?usp=drive_link
