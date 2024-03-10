@@ -479,7 +479,7 @@ class FinanceManager(MDScreen):
         self.ledger_table = None
         self.dialog = None
 
-    def on_pre_enter(self):  # '*args' means it doesn't know what the arguments will be
+    def on_pre_enter(self):
         if App.db.search(query="select count(*) from ledger")[0] != 0:
             self.ids.current_total.text = f"Current Balance: ${App.db.search(query='select total from ledger where id=(select max(id) from ledger)')[0]}"
         if App.db.search(query="select count(*) from ledger where amount>0")[0] != 0:
