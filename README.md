@@ -915,10 +915,10 @@ class OrderManager(MDScreen):
             self.ids.orders_container.add_widget(
                 MDRectangleFlatIconButton(
                     text=f"Order #{order[0]}",
-                    icon=f"{self.choose_icon(order_id=order[0])}",
+                    icon=f"{self.choose_icon(order_id=str(order[0]))}",
                     icon_size=50,
                     size_hint=(1, 0.5),
-                    on_press=lambda x: self.view_details(order[0])
+                    on_press=lambda x, order_id=order[0]: self.view_details(order_id=order_id)
                 )
             )
 ```

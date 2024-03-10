@@ -74,7 +74,8 @@ class HomeScreen(MDScreen):
         self.ids.month_total_orders.text = f"""{App.db.search(query=f"select count(*) from orders where date like '{month}%'")[0]}"""
         self.ids.month_total_profit.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{month}%' and amount>0")[0]}"""
         self.ids.month_total_loss.text = f"""{App.db.search(query=f"select sum(amount) from ledger where date like '{month}%' and amount<=0")[0]}"""
-        self.ids.month_avg_score.text = f"""{get_letter_score(App.db.search(f"select avg(score) from orders where date like '{month}%'")[0])}"""
+        if App.db.search(query=f"select count(*) from orders where date like '{month}%'")[0] != 0:
+            self.ids.month_avg_score.text = f"""{get_letter_score(App.db.search(f"select avg(score) from orders where date like '{month}%'")[0])}"""
 
         self.ids.alltime_orders.text = f"""{App.db.search(query=f"select count(*) from orders")[0]}"""
         self.ids.alltime_completed.text = f"""{App.db.search(query=f"select count(*) from orders where completion=TRUE")[0]}"""
@@ -275,10 +276,10 @@ class OrderManager(MDScreen):
             self.ids.orders_container.add_widget(
                 MDRectangleFlatIconButton(
                     text=f"Order #{order[0]}",
-                    icon=f"{self.choose_icon(order_id=order[0])}",
+                    icon=f"{self.choose_icon(order_id=str(order[0]))}",
                     icon_size=50,
                     size_hint=(1, 0.5),
-                    on_press=lambda x: self.view_details(order[0])
+                    on_press=lambda x, order_id=order[0]: self.view_details(order_id=order_id)
                 )
             )
 
@@ -290,6 +291,7 @@ class OrderManager(MDScreen):
 
     def view_details(self, order_id: int):
         OrderManager.viewed_order = order_id
+        print(OrderManager.viewed_order)
         self.parent.current = "OrderDetails"
 
 
