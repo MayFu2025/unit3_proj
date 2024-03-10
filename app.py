@@ -296,8 +296,6 @@ class OrderManager(MDScreen):
 class OrderDetails(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.order_details = None
-        self.needed_materials = None
 
     def on_enter(self):
         # Gain order information
@@ -413,19 +411,16 @@ class NewOrder(MDScreen):
             self.ids.bluetooth.disabled = False
 
         # calculate sustainability score
-        score = 0
+        self.score = 0
         for material in self.order:
-            score += App.db.search(query=f"select score from resources where name='{material}'")[0]
-
-        self.score = score
+            self.score += App.db.search(query=f"select score from resources where name='{material}'")[0]
 
         # calculate price
-        price = 0
+        self.price = 0
         for material in self.order:
-            price += App.db.search(query=f"select sell_price from resources where name='{material}'")[0]
+            self.price += App.db.search(query=f"select sell_price from resources where name='{material}'")[0]
         for options in self.options[3:]:
-            price += 30
-        self.price = price
+            self.price += 30
 
         # update the text
         self.ids.specifications.text = f"""Base: {self.options[0]}\nPadding: {self.options[1]}\nSpeakers: {self.options[2]}\nOptions: {', '.join(self.options[3:])}\nSustainability Score: {get_letter_score(self.score)}"""
@@ -479,10 +474,9 @@ class NewOrder(MDScreen):
 
 
 class FinanceManager(MDScreen):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.ledger_table = None
-        self.selected_rows = []  # List to keep track which rows were selected
         self.dialog = None
 
     def on_pre_enter(self):  # '*args' means it doesn't know what the arguments will be

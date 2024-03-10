@@ -40,10 +40,13 @@ hasher = sha256_crypt.using(rounds=30000)
 
 
 def make_hash(text: str) -> str:
+    """Given a string, returns the hashed version (using sha256) of the string."""
     return hasher.hash(text)
 
 
 def check_hash_match(text: str, hashed: str) -> bool:
+    """Given a string and a hashed string, returns True if the string matches the hashed string, returns False if the
+    string doesn't match the hashed string."""
     return hasher.verify(text, hashed)
 
 
@@ -76,7 +79,9 @@ def show_popup(screen, messages: list, text: str):
 # Function for calculating sustainability score:
 def get_letter_score(score: float) -> str:
     """Given the numeric sustainability score, returns the letter grade."""
-    if 13 <= score <= 17:
+    if score < 13:
+        output = ""
+    elif 13 <= score <= 17:
         output = "A"
     elif 17 < score <= 22:
         output = "B"

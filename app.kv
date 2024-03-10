@@ -790,23 +790,6 @@ ScreenManager:
                                                 size_hint: 0.2, 0.2
                                                 on_press: root.complete_order()
 
-<MaterialShowcase>:
-        id: materialshowcase
-        orientation: 'horizontal'
-        MDLabel:
-                id: materialname
-                size_hint: 0.4, 1
-                text: "Material"
-        MDLabel:
-                id: materialamount
-                size_hint: 0.4, 1
-                text: "Material"
-        MDCheckbox:
-                id: materialinput
-                size_hint: 0.2, 1
-                on_active: root.on_checkbox_active(*args)
-
-
 
 <NewOrder>:
         BoxLayout:
