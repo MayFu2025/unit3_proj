@@ -141,7 +141,7 @@ Using python and KivyMD I will create a GUI application for HNE in which a user 
 ### Development
 #### Use of Databases (sqlite)
 First, to make working with the database easier, a class called `DatabaseWorker` is created in `library.py`. This class is used to create a connection to the database, and pre-define common code that is used when running queries. The class is defined as follows:
-```.python
+```.py
 class DatabaseWorker:
     def __init__(self, name: str):
         self.name_db = name
@@ -182,7 +182,7 @@ create table if not exists users(
 This command creates a table called `users` with the columns `id`, `first_name`, `last_name`, `password`, and `is_admin`. The `id` column is the primary key, and is used to identify each user. Each of the other columns store its corresponding data. The `password` column is specified as a string of max 256 characters. This is because a password (due to its sensitivity) should be hashed, and to do so effectively with sha256 which will be used, it should be less than 256 characters. To distinguish permissions, the `is_admin` column is used to store a boolean value that indicates whether the user is an admin (full permissions) or not.
 
 Using the library `passlib`, it is possible to create functions that create hashes and check hashes. The following functions are created in `library.py` and used to hash and verify passwords in the application.
-```.python
+```.py
 # Functions for hashing/verification
 hasher = sha256_crypt.using(rounds=30000)
 
@@ -254,7 +254,7 @@ The following kivy code is used to create the log-in screen within the GUI appli
                                         on_press: root.try_login()
 ```
 For the screen to work, the following python code is used to define `StartupScreen`. Within this, the `try_login` function is defined to check if the user's input matches any user in the database. If it does, the user is redirected to the home screen of the application. If it doesn't, an error message is displayed using the `show_popup` function.
-```.python
+```.py
 class StartupScreen(MDScreen):
     def __init__(self, *args, **kwargs):
         super().__init__(args, kwargs)
@@ -302,7 +302,7 @@ create table if not exists ledger(
 This creates the table `ledger` with the columns `id`, `date`, `amount`, and `total`. The `id` column is the primary key, and is used to identify each transaction. Each of the other columns stores the corresponding data.
 
 To view the store's finances, a class for the screen `FinanceManager` is created in `app.kv`. Alone, this screen contains MDLabels displaying information such as the current balance, total profit, and total loss, as well as some MDRaisedButtons. However, in combination with python, a MDDataTable widget can be added to this screen. The `FinanceManager` class is defined in `app.py` as follows:
-```.python
+```.py
 class FinanceManager(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -312,7 +312,7 @@ class FinanceManager(MDScreen):
 The `FinanceManager` class inherits from `MDScreen` and initializes using keyword arguments. The `ledger_table` attribute, which represents the MDDataTable widget to be added, is initialized as None as there is no table yet. The `dialog` attribute is also initialized as None for now.
 
 The following code is used to define the `on_pre_enter` method, which is used to create the table and add it to the screen when the screen is entered:
-```.python
+```.py
     def on_pre_enter(self): # Making a Table
         columns_names = [('id', 50), ('Date', 125), ('Amount', 125)]
         self.ledger_table = MDDataTable(
@@ -329,7 +329,7 @@ The following code is used to define the `on_pre_enter` method, which is used to
 (See Fig.8) In the first line, the list `columns_names` is defined as a list of lists. Each of the lists contain the name of the column and the width of the column. Next, the `ledger_table` attribute is defined as an MDDataTable object. The attributes of this table is defined within the parentheses, just like they would be in a kivy file. the `columns_names` variable is passed into `column_data`, to create the table with the respective titles and sizes. This table is then added to the screen using the `add_widget` function with `ledger_table` as an argument. At this point, there is no data on the table. Hence, the `update` method is called.
 
 The `update` method is defined as follows:
-```.python=
+```.py
    def update(self, sort=None):
       query = 'Select id, date, amount from ledger'
       if sort is not None:
@@ -341,7 +341,7 @@ The `update` method is defined as follows:
 The method first creates a template sqlite query to select the `id`, `date`, and `amount` from the `ledger` table. Although `sort` parameter is set to None by default, having it leaves room to order and/or filter the data on the table using buttons or otherwise from the GUI. This is done in the application, where the `on_press` event of buttons defined in the `FinanceManager` class of `app.kv` is set to this `update` method whilst passing in a argument for `sort`. In these cases, if `sort` is not None, the query is modified to order the results by the value of `sort`. The `search` method is then used to run the query, saving the results onto the variable `data`. The `update_row_data` method derived from the `MDDataTable` class from the `kivymd` library is then used to update the data in the table with `data`. This successfully updates the table with the data from the `ledger` table in the database.
 
 Just to avoid the widget from being created multiple times on top of each other at each entry of the screen, the `on_leave` method is defined to remove the table from the screen when the screen is left:
-```.python
+```.py
     def on_leave(self):
         self.remove_widget(self.ledger_table)
 ```
@@ -395,7 +395,7 @@ MDCard:
 Placing the components of the MDCard in a MDRelative Layout first allows to use FitImage in the shape of the card to create a image of the material as its background. An MDIconButton is created in the top right corner of the card, which when pressed, calls the `purchase_popup` method, passing the name of the resource as an argument. An MDLabel displays the name of the resource. This is repeated for each resource the company uses, within a MDBoxLayout.
 
 The class `InventoryManager` must also be defined in `app.py`. The `purchase_popup` method is also defined here. This is done as follows:
-```.python
+```.py
 class InventoryManager(MDScreen):
    current_material = ""
 
@@ -446,7 +446,7 @@ A custom content class is useful in this situation, as without it, only text can
                 id: total_cost
                 text: "Total cost: $0"
 ```
-```.python
+```.py
 class PurchaseDialog(MDBoxLayout):
     cost = 0  # Total cost of purchase
     amount = 0  # Amount of material to purchase
@@ -472,7 +472,7 @@ In `app.py`, the `PurchaseDialog` class inherits from `MDBoxLayout` and initiali
 The `update_amount_text` method is used to update the text of the `total_cost` label to the amount of resources to be bought based on the user's input. Using the formula of the amount inputted multiplied by cost of that material (saved earlier when creating the string for the `cost_amount` label), this new value is used in a f-string that creates a message for the user about their updated total cost of purchase. At the same time, the `cost` and `amount` variables defined outside the initializer are updated, to the total cost of the purchase and amount of resources that are to be purchased.
 
 With the `cost` and `amount` defined outside of the initializer, they can then be accessed again from the `InventoryManager` class. The following code is used to define the `purchase` method, bound to the "Purchase" button of the dialog, in the `InventoryManager` class:
-```.python
+```.py
 def purchase(self):
    # Purchase (take away money and add materials)
    errors = []
@@ -523,7 +523,7 @@ create table if not exists customers(
 );
 ```
 To create a new order, a new screen called `NewOrder` is created in the kivy file. This screen is used to display the different options the user can pick from for their order. To allow for the screen to be recognized, the class `NewOrder` is defined in the python file:
-```.python
+```.py
  def __init__(self, **kwargs):
      super().__init__(**kwargs)
      self.speakers = {
@@ -580,7 +580,7 @@ MDBoxLayout:
 A vertical MDBoxLayout is used to vertically stack the different children objects. An MDLabel displays that the user is now selecting the quality of the headphones. Another MDBoxLayout widget is used to contain three MDFillRoundFlatIconButton widgets, each representing a different option the user can pick from. An id of each MDFillRoundFlatIconButton is set to the option(material) it represents, so that these buttons can be accessed via the python file. The on_press event of each is set to call the `add_material` method in the NewOrder class, passing the arguments "speaker" (the part of headphone the user is selecting) and the name of the option that was picked. This is repeated for three more categories the user must pick for their order: the base, the padding, and extra options.
 
 The following python code, nested within the class definition of `NewOrder`, is used to define the `add_material` method. This method is used to add the material the user picks to the order, and calculate the cost and sustainability score of the order.
-```.python
+```.py
  def add_material(self, part, material):
      if part == "base":
          self.options[0] = material
@@ -604,7 +604,7 @@ The `add_material` method takes two arguments: `part` and `material`. The method
 If the part is none of the above, it indicates a non-necessary extra option was selected. Hence, the material is appended regularly to the `options` list, placing it after the last pre-existing value of the list (index 3) and hence not-interfering with the initially defined order of "base", "padding", "speaker". The `update` method is then called to update the cost and sustainability score of the order.
 
 The following python code, nested within the class definition of `NewOrder`, is used to define the `update` method. This method is used to disable the buttons to prevent the user from selecting duplicate parts, calculate the cost and sustainability score of the order, and display it to the user.
-```.python
+```.py
  def update(self):
      # disable buttons
      check = {"base": ["aluminium", "carbon", "wood"], 
@@ -689,7 +689,7 @@ MDBoxLayout:
 ```
 
 Using the text provided into each text_field, the user can then place the order. The following defines the method `place_order` that gets called on the press of the "Place Order" button. This method is used to check if the user has inputted the required information, and if so, save the order to the database. (See Fig. 10)
-```.python
+```.py
 def place_order(self):
   errors = []
   
@@ -699,7 +699,7 @@ def place_order(self):
 ```
 First, an empty list `errors` is defined. Using an if statement, the method then checks if the length of the `order` list is less than 10. This is because the minimum amount of material that can be in an order is 10 units (3 base, 2 padding, 5 speakers). If it is, an error message is appended to the `errors` list.
 
-```.python
+```.py
      if self.ids.customer_firstname.text == "" or self.ids.customer_lastname.text == "":
          errors.append("Customer name is missing.")
      else:  # Customer names are present
@@ -711,7 +711,7 @@ First, an empty list `errors` is defined. Using an if statement, the method then
 ```
 The method then checks if the text of the `customer_firstname` and `customer_lastname` MDTextFields are empty, indicating that the user hasn't submitted sufficient information. If they are, an error message is appended to the `errors` list. Otherwise, the method then checks if the customer already exists in store records. This is done by searching the `customers` table for the address of a customer with the first and last name inputted by the user, and saving it in the variable `existing_address`. If `existing_address` is None and the `customer_address` MDTextField is empty, an error message is appended to the `errors` list. Otherwise, that indicates the customer already exists hence on the `customers` table, an address for the customer already exists that can be used.
 
-```.python
+```.py
      if len(errors) == 0:
          # Add customer if new
          if existing_address is None:
@@ -720,7 +720,7 @@ The method then checks if the text of the `customer_firstname` and `customer_las
 ```
 Next, the method checks if the `errors` list is empty. If it is, it indicates that the user has inputted the required information. If the customer is new (No result for `existing_address`), the method adds the customer to the `customers` table using the `run_query` method, passing the query to insert the customer's first name, last name, and address from the MDTextfields into each column of the table.
 
-```.python
+```.py
          # Place new order
          order_description = f"A {self.options[0]} base with {self.options[1]} padding and {self.options[2]} speakers."
          if self.options[3:]:
@@ -739,7 +739,7 @@ The method then creates a description of the order using a template and an f-str
 The method then creates a query to insert values into the columns `date`, `customer_id`, `cost`, `score`, `completion`, and `description`of the `orders` table. The value of date is modified in the same way as done when making a resource purchase. The `customer_id` to be inserted into `orders` is retrieved via a search of the `customers` table for the id of the customer with the first and last name inputted by the user. Finally, the query is then passed into the `run_query` method to be executed.
 
 To place the order, the materials used in that order must also be added to the `OrdersResources` table. This is done as following:
-```.python
+```.py
          # Add materials to order
          order_id = App.db.search(query="select max(id) from orders")[0]
          materials = {x: self.order.count(x) for x in
@@ -845,7 +845,7 @@ MDLabels for each detail of the order, as well as an empty MDList component
 are given a unique id to be accessed from the python file. 
 
 To allow for the screen to be recognized, the class `OrderDetails` is defined in the python file:
-```.python
+```.py
 class OrderDetails(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -855,7 +855,7 @@ class OrderDetails(MDScreen):
 The `OrderDetails` class inherits from `MDScreen` and initializes using keyword arguments. The class initializes with the attributes `order_details` and `needed_materials` both initialized as None for the moment.
 
 The `on_pre_enter` method is used to update the details of the order to be displayed on the screen:
-```.python
+```.py
     def on_enter(self):
         # Gain order information
         query = f"select * from orders where id={OrderManager.viewed_order}"
@@ -888,7 +888,7 @@ The method then retrieves the materials required for the order using a search qu
 
 The reason why `viewed_order` from the class `OrderManager` is used as the order id of the order being displayed, stems from another screen, `OrderManager`, that acts as a homepage of all order related screens, linking `OrderDetails` and `NewOrder` screens to the rest of the application. In this `OrderManager` screen, a MDList nested under MDScrollView in its kivy file creates a scrollable list of buttons for each order, allowing for the user to select an order to view the details of. The list is created as below, in `app.py`:
 
-```.python
+```.py
 class OrderManager(MDScreen):
     viewed_order = None
 
@@ -929,7 +929,7 @@ The `update` method is used to update the list of orders to be displayed on the 
 The method then loops through the `orders_data` list, and for each order, creates a MDRectangleFlatIconButton widget labeled with the id of the order (from index 0 of each order being looped). The method `view_details` with the order id passed as an argument is binded to the `on_press` event of the button. On each iteration of the loop, the resulting button widget is added to the MDList with id `orders_container`, successfully displaying a list of orders.
 
 The `view_details` method is used to change the screen to the `OrderDetails` screen, and update the `viewed_order` attribute to the id of the order that was selected:
-```.python
+```.py
     def view_details(self, order_id):
         OrderManager.viewed_order = order_id
         self.parent.current = "OrderDetails"
